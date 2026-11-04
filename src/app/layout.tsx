@@ -6,9 +6,19 @@ const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-disp
 const sans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-sans" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", weight: ["500", "700"] });
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000");
+
+const deskripsi = "Tanya jawab presentasi kelas jadi seru: pilih avatar, kirim pertanyaan, dukung pertanyaan teman, dan kirim reaksi ke layar.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Ruang Tanya",
-  description: "Tanya jawab presentasi kelas: kirim pertanyaan, dukung pertanyaan teman, kirim reaksi.",
+  description: deskripsi,
+  applicationName: "Ruang Tanya",
+  openGraph: { type: "website", siteName: "Ruang Tanya", locale: "id_ID", title: "Ruang Tanya", description: deskripsi },
+  twitter: { card: "summary_large_image", title: "Ruang Tanya", description: deskripsi },
 };
 
 export const viewport: Viewport = { themeColor: "#FFFBF2", width: "device-width", initialScale: 1 };
