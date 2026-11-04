@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup v2 — Ruang Tanya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFFBF2;
+    --card: #FFFFFF;
+    --ink: #121212;
+    --ink-2: #4A4740;
+    --ink-3: #8D887C;
+    --line: #121212;
+    --soft: #EFE9DB;
+    --tomato: #FF5B3A;
+    --sun: #FFC93C;
+    --mint: #3DD6B0;
+    --sky: #5B9DFF;
+    --bubble: #FF9ECF;
+    --lime: #A7E07A;
+    --display: "Bricolage Grotesque", system-ui, sans-serif;
+    --sans: "Plus Jakarta Sans", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --sh: 4px 4px 0 var(--ink);
+    --sh-sm: 2px 2px 0 var(--ink);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+
+  /* ---------- mockup switcher (bukan bagian aplikasi) ---------- */
+  .mock-bar { position: sticky; top: 0; z-index: 100; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 8px 16px; background: var(--ink); color: #fff; font: 500 12px/1 var(--mono); }
+  .mock-bar .tag { margin-right: auto; opacity: .55; text-transform: uppercase; letter-spacing: .06em; }
+  .mock-bar button { background: none; border: 1px solid transparent; color: #fff; padding: 7px 10px; border-radius: 6px; font: inherit; }
+  .mock-bar button[aria-current="true"] { border-color: #fff; background: #2a2a2a; }
+  .screen { display: none; }
+  .screen.on { display: block; }
+
+  /* ---------- shared ---------- */
+  .label { font: 700 11px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--card); font: 700 14px/1 var(--sans); box-shadow: var(--sh-sm); transition: transform .08s, box-shadow .08s; }
+  .btn:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--ink); }
+  .btn:active { transform: translate(2px,2px); box-shadow: 0 0 0 var(--ink); }
+  .btn.go { background: var(--tomato); color: #fff; }
+  .btn.sun { background: var(--sun); }
+  .btn.mint { background: var(--mint); }
+  .btn.dark { background: var(--ink); color: #fff; box-shadow: 2px 2px 0 var(--tomato); }
+  .btn.sm { padding: 7px 11px; font-size: 13px; border-radius: 10px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 2px solid var(--ink); border-radius: 999px; font: 700 12px/1.2 var(--sans); background: var(--card); white-space: nowrap; }
+  .chip.live { background: var(--tomato); color: #fff; }
+  .chip.live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: pulse 1.2s infinite; }
+  .chip.done { background: var(--mint); }
+  .chip.sun { background: var(--sun); }
+  @keyframes pulse { 50% { opacity: .3; } }
+  .av { display: inline-block; flex: none; }
+  .av svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .linkish { background: none; border: 0; padding: 0; font: 600 13px var(--sans); color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
+  .linkish:hover { color: var(--ink); }
+
+  /* ================= PHONE STAGE ================= */
+  .stage { padding: 40px 16px 80px; display: grid; grid-template-columns: 1fr 390px 1fr; gap: 44px; max-width: 1140px; margin: 0 auto; align-items: start; }
+  .note { font: 13.5px/1.6 var(--sans); color: var(--ink-2); max-width: 250px; padding-top: 110px; }
+  .note b { display: block; margin-bottom: 8px; font: 700 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--tomato); }
+  .note.l { justify-self: end; text-align: right; }
+  .phone { width: 390px; height: 820px; border: 3px solid var(--ink); border-radius: 44px; background: var(--bg); box-shadow: 10px 10px 0 var(--ink); overflow: hidden; position: relative; display: flex; flex-direction: column; }
+  .ph-status { display: flex; justify-content: space-between; padding: 14px 28px 4px; font: 700 13px var(--sans); flex: none; }
+  .ph-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
+  .ph-scroll::-webkit-scrollbar { display: none; }
+
+  /* ---------- 01 form ---------- */
+  .f-head { margin: 10px 16px 0; padding: 18px 18px 16px; border: 2px solid var(--ink); border-radius: 20px; background: var(--sun); box-shadow: var(--sh); position: relative; overflow: hidden; }
+  .f-head .confetti { position: absolute; right: -10px; top: -10px; width: 120px; opacity: .9; }
+  .f-head h1 { font: 800 30px/1.02 var(--display); letter-spacing: -.02em; margin: 10px 0 12px; max-width: 300px; position: relative; text-wrap: balance; }
+  .f-head .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; position: relative; }
+  .f-head .who { font: 600 13px var(--sans); }
+  .crowd { display: flex; align-items: center; gap: 8px; margin: 14px 16px 0; font: 600 13px var(--sans); color: var(--ink-2); }
+  .crowd .stack { display: flex; }
+  .crowd .stack .av { width: 28px; height: 28px; margin-left: -8px; }
+  .crowd .stack .av:first-child { margin-left: 0; }
+
+  .sec { margin: 22px 16px 0; }
+  .sec-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .sec-h h2 { font: 800 19px var(--display); margin: 0; letter-spacing: -.01em; }
+  .av-pick { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .av-opt { min-width: 0; aspect-ratio: 1; border: 2px solid var(--ink); border-radius: 16px; background: var(--card); padding: 8px; position: relative; transition: transform .12s; }
+  .av-opt:hover { transform: rotate(-4deg) scale(1.04); }
+  .av-opt.on { background: var(--ink); box-shadow: 3px 3px 0 var(--tomato); }
+  .av-opt.on .av { animation: boing .5s; }
+  @keyframes boing { 30% { transform: scale(1.25) rotate(-8deg); } 60% { transform: scale(.92) rotate(5deg); } 100% { transform: none; } }
+  .av-opt .av { width: 100%; height: 100%; }
+  .av-name { margin-top: 10px; padding: 10px 12px; border: 2px dashed var(--ink-3); border-radius: 12px; font: 600 14px var(--sans); display: flex; align-items: center; gap: 8px; }
+  .av-name b { font-family: var(--display); font-size: 17px; }
+  .av-name button { margin-left: auto; }
+
+  .card-form { margin: 22px 16px 0; padding: 4px 16px 18px; border: 2px solid var(--ink); border-radius: 20px; background: var(--card); box-shadow: var(--sh); }
+  .fld { padding-top: 14px; }
+  .fld label { display: flex; justify-content: space-between; font: 700 13px var(--sans); margin-bottom: 6px; }
+  .fld label span { font-weight: 500; color: var(--ink-3); }
+  .fld input, .fld textarea { width: 100%; border: 2px solid var(--ink); border-radius: 12px; background: var(--bg); padding: 11px 12px; font: 16px/1.4 var(--sans); outline: none; resize: none; transition: background .12s, box-shadow .12s; }
+  .fld input:focus, .fld textarea:focus { background: #fff; box-shadow: 3px 3px 0 var(--sky); }
+  .fld.two { display: grid; grid-template-columns: 1.4fr 1fr; gap: 10px; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; border: 2px solid var(--ink); border-radius: 12px; overflow: hidden; }
+  .seg button { border: 0; background: var(--bg); padding: 10px 8px; font: 600 13px var(--sans); }
+  .seg button + button { border-left: 2px solid var(--ink); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .seg-hint { font: 12px var(--sans); color: var(--ink-3); margin-top: 6px; }
+  .submit { margin: 20px 16px 28px; }
+  .submit .btn { width: 100%; padding: 17px; font-size: 17px; border-radius: 16px; box-shadow: var(--sh); }
+
+  .success { display: none; padding: 30px 20px 30px; text-align: center; }
+  .success.show { display: block; }
+  .success .burst { position: relative; width: 170px; height: 170px; margin: 10px auto 0; }
+  .success .burst .ray { position: absolute; inset: 0; animation: spin 9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .success .burst .av { position: absolute; inset: 30px; width: auto; height: auto; animation: boing .7s .1s both; }
+  .success h2 { font: 800 30px/1.05 var(--display); margin: 14px 0 8px; letter-spacing: -.02em; }
+  .success p { color: var(--ink-2); margin: 0 0 18px; }
+  .badge-earn { display: flex; align-items: center; gap: 12px; text-align: left; margin: 0 4px 20px; padding: 12px 14px; border: 2px solid var(--ink); border-radius: 16px; background: var(--mint); box-shadow: var(--sh); animation: pop .5s .5s both; }
+  @keyframes pop { from { transform: scale(.6) rotate(-6deg); opacity: 0; } 70% { transform: scale(1.05) rotate(1deg); opacity: 1; } to { transform: none; } }
+  .medal { width: 46px; height: 46px; flex: none; }
+  .badge-earn b { display: block; font: 800 17px var(--display); }
+  .badge-earn span { font-size: 13px; }
+
+  /* ---------- 02 feed ---------- */
+  .feed-head { display: flex; align-items: center; gap: 10px; padding: 8px 16px 12px; border-bottom: 2px solid var(--ink); }
+  .feed-head .t { flex: 1; min-width: 0; }
+  .feed-head .t b { display: block; font: 800 17px/1.15 var(--display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .feed-head .t span { font-size: 12px; color: var(--ink-2); }
+  .tabs { display: flex; gap: 8px; padding: 12px 16px 4px; }
+  .tabs button { border: 2px solid var(--ink); border-radius: 999px; background: var(--card); padding: 6px 13px; font: 700 13px var(--sans); }
+  .tabs button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .flist { padding: 8px 16px 110px; display: grid; gap: 12px; }
+  .fq { border: 2px solid var(--ink); border-radius: 18px; background: var(--card); padding: 12px 12px 10px; box-shadow: var(--sh-sm); position: relative; }
+  .fq.mine { background: #FFF3C4; }
+  .fq.spot { box-shadow: 4px 4px 0 var(--tomato); }
+  .fq-top { display: flex; align-items: center; gap: 8px; }
+  .fq-top .av { width: 34px; height: 34px; }
+  .fq-top .nm { font: 700 13.5px var(--sans); flex: 1; min-width: 0; }
+  .fq-top .nm small { display: block; font: 500 11.5px var(--sans); color: var(--ink-3); }
+  .fq p { margin: 9px 0 10px; font: 600 15px/1.4 var(--sans); }
+  .fq-bot { display: flex; justify-content: space-between; align-items: center; }
+  .plus { display: inline-flex; align-items: center; gap: 7px; border: 2px solid var(--ink); border-radius: 999px; background: var(--bg); padding: 5px 11px 5px 6px; font: 700 12.5px var(--sans); transition: transform .1s; }
+  .plus .n { min-width: 26px; height: 22px; display: grid; place-items: center; border-radius: 999px; background: var(--ink); color: #fff; font: 700 12px var(--mono); padding: 0 6px; }
+  .plus.on { background: var(--sun); }
+  .plus.on .n { background: var(--tomato); }
+  .plus:active { transform: scale(.94); }
+  .plus.bump .n { animation: boing .45s; }
+  .own-acts { display: flex; gap: 12px; align-items: center; }
+  .lock { font: 600 12px var(--sans); color: var(--ink-3); }
+  .confirm { font: 700 13.5px var(--sans); }
+  .fq textarea.edit { width: 100%; margin: 9px 0 10px; border: 2px solid var(--ink); border-radius: 12px; padding: 10px; background: #fff; font: 600 15px/1.4 var(--sans); resize: none; outline: none; box-shadow: 3px 3px 0 var(--sky); }
+  .flag { margin-bottom: 8px; padding: 7px 10px; border: 2px solid var(--ink); border-radius: 10px; background: #FFE0D8; font: 700 12.5px var(--sans); }
+  .mini-badge { font: 700 11px var(--mono); padding: 3px 7px; border-radius: 6px; background: var(--ink); color: var(--sun); }
+
+  .react-bar { position: absolute; left: 12px; right: 12px; bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 4px; padding: 8px 10px; border: 2px solid var(--ink); border-radius: 20px; background: var(--card); box-shadow: var(--sh); }
+  .react-bar span { font: 700 11px var(--mono); color: var(--ink-2); line-height: 1.2; }
+  .react-bar button { width: 44px; height: 44px; border: 0; background: none; font-size: 25px; border-radius: 12px; transition: transform .1s; }
+  .react-bar button:hover { background: var(--soft); }
+  .react-bar button:active { transform: scale(1.35) rotate(-10deg); }
+  .pop-react { position: absolute; font-size: 26px; pointer-events: none; animation: rise 1.1s ease-out forwards; z-index: 5; }
+  @keyframes rise { to { transform: translateY(-160px) scale(1.4); opacity: 0; } }
+
+  /* ================= 03 PANEL ADMIN ================= */
+  .p-wrap { max-width: 1280px; margin: 0 auto; padding: 0 32px 120px; }
+  .p-nav { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font: 800 20px var(--display); letter-spacing: -.02em; }
+  .brand i { width: 30px; height: 30px; border: 2px solid var(--ink); border-radius: 10px 10px 10px 2px; background: var(--tomato); display: inline-block; box-shadow: var(--sh-sm); }
+  .p-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; padding: 14px 0 22px; }
+  .p-head h1 { font: 800 46px/1 var(--display); letter-spacing: -.03em; margin: 10px 0 0; }
+  .stats { display: flex; gap: 12px; }
+  .stat { border: 2px solid var(--ink); border-radius: 16px; padding: 10px 16px; background: var(--card); box-shadow: var(--sh-sm); min-width: 110px; }
+  .stat b { display: block; font: 800 30px/1 var(--display); }
+  .stat span { font: 600 12px var(--sans); color: var(--ink-2); }
+  .stat:nth-child(1) { background: var(--sky); }
+  .stat:nth-child(2) { background: var(--mint); }
+  .stat:nth-child(3) { background: var(--bubble); }
+  .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px; border: 2px solid var(--ink); border-radius: 18px; background: var(--card); box-shadow: var(--sh); margin-bottom: 26px; }
+  .toolbar .grow { flex: 1; }
+  .switch { display: inline-flex; align-items: center; gap: 10px; border: 0; background: none; padding: 0 6px; font: 700 14px var(--sans); }
+  .switch .tr { width: 44px; height: 24px; border: 2px solid var(--ink); border-radius: 999px; background: var(--soft); position: relative; transition: background .15s; }
+  .switch .tr::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--ink); transition: transform .15s; }
+  .switch[aria-pressed="true"] .tr { background: var(--mint); }
+  .switch[aria-pressed="true"] .tr::after { transform: translateX(20px); }
+  .url { font: 600 14px var(--mono); padding: 8px 12px; border-radius: 10px; background: var(--soft); }
+
+  .pq { border: 2px solid var(--ink); border-radius: 22px; background: var(--card); box-shadow: var(--sh); margin-bottom: 22px; overflow: hidden; }
+  .pq.hidden { opacity: .4; }
+  .pq.fresh { animation: drop .6s cubic-bezier(.2,.9,.3,1.3); }
+  @keyframes drop { from { transform: translateY(-30px) rotate(-1.5deg); opacity: 0; } }
+  .pq.spot { box-shadow: 6px 6px 0 var(--tomato); }
+  .pq-top { display: grid; grid-template-columns: auto 56px 1fr auto; gap: 14px; align-items: start; padding: 18px 20px 16px; }
+  .pq-no { font: 800 34px/1 var(--display); color: var(--ink-3); padding-top: 8px; min-width: 44px; }
+  .pq-top .av { width: 56px; height: 56px; }
+  .pq-who { font: 600 13px var(--sans); color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+  .pq-who b { color: var(--ink); font-size: 14.5px; }
+  .pq-text { font: 700 22px/1.3 var(--display); letter-spacing: -.01em; margin: 8px 0 0; }
+  .pq-side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+  .menu-wrap { position: relative; }
+  .menu { display: none; position: absolute; right: 0; top: 36px; z-index: 6; min-width: 210px; background: var(--card); border: 2px solid var(--ink); border-radius: 14px; box-shadow: var(--sh); overflow: hidden; }
+  .menu.show { display: block; }
+  .menu button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 11px 14px; font: 600 14px var(--sans); }
+  .menu button + button { border-top: 1px solid var(--soft); }
+  .menu button:hover { background: var(--soft); }
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 2px solid var(--ink); }
+  .col { padding: 14px 18px 16px; display: flex; flex-direction: column; min-height: 190px; position: relative; }
+  .col + .col { border-left: 2px solid var(--ink); }
+  .col-h { display: flex; justify-content: space-between; align-items: center; margin: -14px -18px 12px; padding: 9px 18px; border-bottom: 2px solid var(--ink); }
+  .col.ai .col-h { background: #DCE9FF; }
+  .col.pen .col-h { background: #FFE0EF; }
+  .col.me .col-h { background: #FFEFC2; }
+  .col-body { flex: 1; font: 14px/1.6 var(--sans); }
+  .col-body.empty { color: var(--ink-3); font-style: italic; }
+  .col textarea { flex: 1; width: 100%; min-height: 110px; border: 2px dashed var(--ink-3); border-radius: 12px; background: transparent; padding: 10px; font: 14px/1.6 var(--sans); resize: vertical; outline: none; }
+  .col textarea:focus { border-style: solid; border-color: var(--ink); background: #fff; }
+  .col-f { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 12px; }
+  .col-f .acts { display: flex; gap: 12px; }
+  .pick { display: inline-flex; align-items: center; gap: 7px; border: 2px solid var(--ink); border-radius: 10px; background: var(--card); padding: 6px 10px; font: 700 12.5px var(--sans); }
+  .pick .bx { width: 15px; height: 15px; border: 2px solid var(--ink); border-radius: 4px; display: grid; place-items: center; }
+  .pick:disabled { opacity: .35; cursor: not-allowed; }
+  .pick.on { background: var(--ink); color: #fff; }
+  .pick.on .bx { background: var(--mint); }
+  .pick.on .bx::after { content: ""; width: 7px; height: 4px; border-left: 2px solid var(--ink); border-bottom: 2px solid var(--ink); transform: rotate(-45deg) translate(1px,-1px); }
+  .stamp { transform: rotate(-5deg); font: 800 11px/1 var(--display); letter-spacing: .04em; color: var(--tomato); border: 2.5px solid var(--tomato); border-radius: 8px; padding: 4px 7px; background: #fff; animation: stampIn .3s cubic-bezier(.2,.9,.3,1.4); pointer-events: none; }
+  @keyframes stampIn { from { transform: rotate(-5deg) scale(2); opacity: 0; } }
+  .saved { font: 600 11.5px var(--mono); color: var(--ink-3); }
+  .st { font: 600 13px var(--sans); display: inline-flex; gap: 8px; align-items: center; }
+  .st.work::before { content: ""; width: 12px; height: 12px; border: 2.5px solid var(--soft); border-top-color: var(--sky); border-radius: 50%; animation: spin .8s linear infinite; }
+  .st.fail { color: var(--tomato); }
+  .skel { display: grid; gap: 8px; margin-top: 10px; }
+  .skel i { display: block; height: 10px; border-radius: 6px; background: linear-gradient(90deg, var(--soft), #F8F3E7, var(--soft)); background-size: 200% 100%; animation: sh 1.3s infinite; }
+  .skel i:nth-child(2) { width: 90%; } .skel i:nth-child(3) { width: 72%; } .skel i:nth-child(4) { width: 50%; }
+  @keyframes sh { to { background-position: -200% 0; } }
+  .p-add { display: flex; justify-content: space-between; align-items: center; padding: 6px 4px; color: var(--ink-2); }
+
+  /* ================= 04 LAYAR PRESENTASI ================= */
+  #s-live { background: #111; color: #fff; min-height: calc(100vh - 41px); position: relative; overflow: hidden; }
+  .lv { aspect-ratio: 16/9; max-height: calc(100vh - 41px); width: 100%; margin: 0 auto; display: grid; grid-template-rows: auto 1fr; padding: 28px 36px 30px; gap: 22px; position: relative; max-width: calc((100vh - 41px) * 16 / 9); }
+  .lv-top { display: flex; align-items: center; gap: 20px; }
+  .lv-top .brand { color: #fff; font-size: 22px; }
+  .lv-top .brand i { border-color: #fff; box-shadow: 2px 2px 0 #fff; }
+  .lv-title { flex: 1; font: 700 18px var(--display); color: #bdbdbd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lv-join { display: flex; align-items: center; gap: 14px; background: var(--sun); color: var(--ink); border-radius: 18px; padding: 8px 18px 8px 8px; border: 2px solid #fff; }
+  .lv-join .qr { width: 66px; height: 66px; background: #fff; border-radius: 10px; padding: 5px; }
+  .lv-join b { display: block; font: 800 20px/1.1 var(--display); }
+  .lv-join span { font: 600 13px var(--sans); }
+  .lv-count { text-align: right; }
+  .lv-count b { display: block; font: 800 34px/1 var(--display); color: var(--mint); }
+  .lv-count span { font: 600 12px var(--sans); color: #aaa; }
+  .lv-main { display: grid; grid-template-columns: 1.6fr 1fr; gap: 26px; min-height: 0; }
+  .spotlight { border: 3px solid #fff; border-radius: 28px; background: var(--tomato); color: var(--ink); padding: 30px 34px; display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: 8px 8px 0 #fff; }
+  .spotlight.empty { background: #1d1d1d; color: #fff; justify-content: center; align-items: center; text-align: center; }
+  .spotlight .chip { align-self: flex-start; border-color: var(--ink); background: var(--ink); color: #fff; font-size: 14px; padding: 6px 14px; }
+  .spotlight .chip::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--tomato); animation: pulse 1.2s infinite; }
+  .spot-q { font: 800 clamp(26px, 3.4vw, 54px)/1.08 var(--display); letter-spacing: -.025em; margin: auto 0; padding: 18px 0; }
+  .spot-who { display: flex; align-items: center; gap: 14px; }
+  .spot-who .av { width: 74px; height: 74px; }
+  .spot-who b { display: block; font: 800 24px/1.1 var(--display); }
+  .spot-who span { font: 600 15px var(--sans); }
+  .spot-who .votes { margin-left: auto; font: 800 26px var(--display); background: var(--ink); color: var(--sun); border-radius: 14px; padding: 8px 14px; }
+  .spotlight.swap { animation: swap .5s cubic-bezier(.2,.9,.3,1.2); }
+  @keyframes swap { from { transform: scale(.94) rotate(-1.5deg); opacity: .3; } }
+  .queue { display: flex; flex-direction: column; gap: 12px; min-height: 0; overflow: hidden; }
+  .queue h3 { margin: 0 0 2px; font: 700 13px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #9a9a9a; display: flex; justify-content: space-between; }
+  .lq { display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; align-items: center; padding: 12px 14px; border: 2px solid #fff; border-radius: 18px; color: var(--ink); background: #fff; transition: transform .35s; }
+  .lq .av { width: 48px; height: 48px; }
+  .lq p { margin: 0; font: 700 16px/1.3 var(--sans); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .lq small { display: block; font: 600 12px var(--sans); opacity: .75; margin-bottom: 2px; }
+  .lq .v { font: 800 20px var(--display); background: var(--ink); color: #fff; border-radius: 12px; padding: 4px 10px; min-width: 44px; text-align: center; }
+  .lq.new { animation: drop .6s cubic-bezier(.2,.9,.3,1.3); }
+  .lq.done { opacity: .45; }
+  .lq:nth-child(4n+2) { background: var(--sun); transform: rotate(-.6deg); }
+  .lq:nth-child(4n+3) { background: var(--mint); transform: rotate(.5deg); }
+  .lq:nth-child(4n+4) { background: var(--sky); transform: rotate(-.3deg); }
+  .lq:nth-child(4n+5) { background: var(--bubble); transform: rotate(.6deg); }
+  .float-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 20; }
+  .flo { position: absolute; bottom: -60px; font-size: 44px; animation: flo 3.6s ease-out forwards; }
+  @keyframes flo { 0% { transform: translateY(0) scale(.6); opacity: 0; } 12% { opacity: 1; transform: translateY(-80px) scale(1.1); } 100% { transform: translateY(-75vh) translateX(var(--dx)) scale(1); opacity: 0; } }
+  .lv-ctl { position: absolute; left: 36px; bottom: 10px; display: flex; gap: 10px; z-index: 30; }
+  .lv-ctl button { background: #222; color: #ddd; border: 1px solid #444; border-radius: 8px; padding: 5px 10px; font: 600 12px var(--sans); }
+  .new-pop { position: absolute; right: 36px; top: 120px; z-index: 25; background: var(--sun); color: var(--ink); border: 2px solid #fff; border-radius: 16px; padding: 10px 16px; font: 800 16px var(--display); display: flex; gap: 10px; align-items: center; transform: translateX(calc(100% + 80px)); transition: transform .4s cubic-bezier(.2,.9,.3,1.2); }
+  .new-pop.show { transform: none; }
+  .new-pop .av { width: 36px; height: 36px; }
+
+  .podium { position: absolute; inset: 0; z-index: 40; background: rgba(17,17,17,.96); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
+  .podium.show { display: flex; }
+  .podium h2 { font: 800 48px var(--display); margin: 0 0 6px; letter-spacing: -.02em; }
+  .podium p { color: #aaa; margin: 0 0 36px; }
+  .pods { display: flex; align-items: flex-end; gap: 22px; }
+  .pod { width: 220px; text-align: center; }
+  .pod .av { width: 96px; height: 96px; animation: boing .8s both; }
+  .pod b { display: block; font: 800 22px var(--display); margin-top: 8px; }
+  .pod small { display: block; color: #bbb; font-size: 13px; margin: 2px 0 10px; }
+  .pod .blk { border: 3px solid #fff; border-bottom: 0; border-radius: 18px 18px 0 0; color: var(--ink); font: 800 64px/1 var(--display); padding-top: 18px; animation: grow .7s cubic-bezier(.2,.9,.3,1.1) both; transform-origin: bottom; }
+  @keyframes grow { from { transform: scaleY(0); } }
+  .pod.p1 .blk { height: 220px; background: var(--sun); }
+  .pod.p2 .blk { height: 160px; background: var(--sky); }
+  .pod.p3 .blk { height: 120px; background: var(--mint); }
+  .pod.p1 .av { animation-delay: .6s; } .pod.p2 .av { animation-delay: .3s; } .pod.p3 .av { animation-delay: .1s; }
+  .pod .lab { display: inline-block; margin-top: 6px; font: 700 11px var(--mono); padding: 4px 8px; border-radius: 6px; background: #222; color: var(--sun); }
+
+  /* ================= 05 WORD ================= */
+  #s-word { background: #E8E2D3; min-height: calc(100vh - 41px); padding-bottom: 64px; }
+  .w-bar { position: sticky; top: 41px; z-index: 10; display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 14px 32px; background: var(--bg); border-bottom: 2px solid var(--ink); }
+  .w-bar h2 { font: 800 21px var(--display); margin: 4px 0 0; }
+  .w-bar .r { display: flex; gap: 12px; }
+  .warn { max-width: 1123px; margin: 24px auto 0; padding: 12px 16px; border: 2px solid var(--ink); border-radius: 14px; background: #FFE0D8; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 14px; box-shadow: var(--sh-sm); }
+  .warn.ok { background: #D4F6EC; }
+  .page { width: 1123px; max-width: calc(100% - 32px); margin: 24px auto 0; background: #fff; padding: 76px; box-shadow: 0 8px 28px rgba(0,0,0,.12); font: 12pt/1.4 "Times New Roman", Times, serif; color: #000; }
+  .page h3 { text-align: center; font-size: 14pt; margin: 0 0 18px; }
+  .page .ident div { display: grid; grid-template-columns: 170px 1fr; }
+  .page .ident { margin-bottom: 18px; }
+  .page table { width: 100%; border-collapse: collapse; font-size: 11pt; }
+  .page th, .page td { border: 1px solid #000; padding: 4px 6px; vertical-align: top; }
+  .page th { background: #D9E2F3; }
+  .page td.c { text-align: center; } .page td.j { text-align: justify; }
+  .page td.miss { background: #FDECEA; color: #A12A16; font-style: italic; }
+
+  .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, calc(100% + 60px)); z-index: 200; background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 14px; border: 2px solid #fff; font: 600 14px var(--sans); transition: transform .3s cubic-bezier(.2,.9,.3,1.3); box-shadow: 4px 4px 0 var(--tomato); }
+  .toast.show { transform: translate(-50%, 0); }
+
+  @media (max-width: 1060px) {
+    .stage { grid-template-columns: 1fr; justify-items: center; }
+    .note { display: none; }
+    .cols { grid-template-columns: 1fr; }
+    .col + .col { border-left: 0; border-top: 2px solid var(--ink); }
+    .lv-main { grid-template-columns: 1fr; }
+    .lv { aspect-ratio: auto; max-height: none; }
+  }
+  @media (max-width: 700px) {
+    .p-wrap { padding: 0 14px 100px; }
+    .p-head h1 { font-size: 32px; }
+    .pq-top { grid-template-columns: 44px 1fr auto; }
+    .pq-no { display: none; }
+    .phone { width: 100%; max-width: 390px; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<nav class="mock-bar" aria-label="Layar mockup">
+  <span class="tag">Mockup v2 · Ruang Tanya</span>
+  <button data-go="form" aria-current="true">01 Form penanya</button>
+  <button data-go="feed">02 Pertanyaan teman</button>
+  <button data-go="panel">03 Panel admin</button>
+  <button data-go="live">04 Layar presentasi</button>
+  <button data-go="word">05 Pratinjau Word</button>
+</nav>
+
+<!-- ======================= 01 FORM ======================= -->
+<section class="screen on" id="s-form">
+  <div class="stage">
+    <p class="note l"><b>Penanya</b>Dibuka dari link di grup WA atau QR di layar. Tanpa login. Pilih avatar dulu supaya seru, lalu isi pertanyaan.</p>
+    <div class="phone">
+      <div class="ph-status"><span>10.14</span><span>4G ▮▮▮</span></div>
+      <div class="ph-scroll" id="form-scroll">
+        <div id="form-view">
+          <header class="f-head">
+            <svg class="confetti" viewBox="0 0 120 120" aria-hidden="true"><g stroke="#121212" stroke-width="2"><circle cx="86" cy="30" r="10" fill="#FF5B3A"/><rect x="40" y="18" width="14" height="14" rx="3" fill="#5B9DFF" transform="rotate(20 47 25)"/><path d="M70 64 l10 -16 l10 16z" fill="#3DD6B0"/><circle cx="104" cy="74" r="6" fill="#FF9ECF"/></g></svg>
+            <span class="label">Pendidikan Agama Islam</span>
+            <h1>Akhlak dalam Kehidupan Sehari-hari</h1>
+            <div class="row"><span class="who">Kelompok 3 · Sel, 10 Nov</span><span class="chip live">Live</span></div>
+          </header>
+          <div class="crowd"><span class="stack" id="crowd"></span><span id="crowd-t">5 teman sudah bertanya</span></div>
+
+          <div class="sec">
+            <div class="sec-h"><h2>Pilih avatarmu</h2><button class="linkish" id="shuffle">Acak</button></div>
+            <div class="av-pick" id="av-pick"></div>
+            <div class="av-name"><span class="av" id="av-cur" style="width:34px;height:34px"></span><span>Kamu jadi <b id="av-cur-n">Si Kepo</b></span></div>
+          </div>
+
+          <form class="card-form" id="ask" novalidate>
+            <div class="fld"><label for="nama">Nama</label><input id="nama" value="Aulia Rahma" autocomplete="name"></div>
+            <div class="fld two">
+              <div><label for="nim">NIM</label><input id="nim" value="2310511078" inputmode="numeric"></div>
+              <div><label for="kel">Kelompok</label><input id="kel" value="3" inputmode="numeric"></div>
+            </div>
+            <div class="fld"><label for="tanya">Pertanyaan</label><textarea id="tanya" rows="3">Bagaimana cara menegur teman yang akhlaknya kurang baik tanpa menyakiti hatinya?</textarea></div>
+            <div class="fld"><label for="jwb">Jawaban versimu <span>opsional</span></label><textarea id="jwb" rows="3" placeholder="Punya pendapat sendiri? Tulis di sini."></textarea></div>
+            <div class="fld">
+              <label>Tampil di layar sebagai</label>
+              <div class="seg" id="seg"><button type="button" aria-pressed="true" data-v="nama">Nama asli</button><button type="button" aria-pressed="false" data-v="alias">Nama avatar</button></div>
+              <div class="seg-hint">NIM tidak pernah ditampilkan ke teman.</div>
+            </div>
+          </form>
+          <div class="submit"><button class="btn go" form="ask" type="submit">Kirim pertanyaan 🚀</button></div>
+        </div>
+
+        <div class="success" id="success" aria-live="polite">
+          <div class="burst">
+            <svg class="ray" viewBox="0 0 170 170" aria-hidden="true"><g fill="#FFC93C" stroke="#121212" stroke-width="2"><path d="M85 0 L95 60 L85 85 L75 60z"/><path d="M85 170 L95 110 L85 85 L75 110z"/><path d="M0 85 L60 75 L85 85 L60 95z"/><path d="M170 85 L110 75 L85 85 L110 95z"/><path d="M25 25 L72 66 L85 85 L64 72z"/><path d="M145 145 L98 104 L85 85 L106 98z"/><path d="M145 25 L104 72 L85 85 L98 64z"/><path d="M25 145 L66 98 L85 85 L72 106z"/></g></svg>
+            <span class="av" id="succ-av"></span>
+          </div>
+          <h2>Terkirim! Kamu penanya ke-6</h2>
+          <p>Kelompok 3 akan membahasnya di sesi tanya jawab.</p>
+          <div class="badge-earn">
+            <svg class="medal" viewBox="0 0 46 46" aria-hidden="true"><path d="M14 2h8l4 14h-8z M32 2h-8l-4 14h8z" fill="#FF5B3A" stroke="#121212" stroke-width="2"/><circle cx="23" cy="29" r="14" fill="#FFC93C" stroke="#121212" stroke-width="2"/><path d="M23 21l2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z" fill="#fff" stroke="#121212" stroke-width="1.5"/></svg>
+            <div><b>Lencana: Berani Bertanya</b><span>Dapat dari pertanyaan pertamamu di sesi ini.</span></div>
+          </div>
+          <button class="btn dark" style="width:100%;padding:15px" data-go="feed">Lihat pertanyaan teman →</button>
+          <p style="margin-top:14px"><button class="linkish" id="again">Kirim pertanyaan lain</button></p>
+        </div>
+      </div>
+    </div>
+    <p class="note"><b>Coba</b>Ganti avatar (atau klik “Acak”), lalu kirim. Pertanyaanmu langsung muncul di Pertanyaan teman, Panel admin, dan Layar presentasi.</p>
+  </div>
+</section>
+
+<!-- ======================= 02 FEED ======================= -->
+<section class="screen" id="s-feed">
+  <div class="stage">
+    <p class="note l"><b>Pertanyaan teman</b>Penanya bisa melihat pertanyaan teman lain dan menekan “Aku juga penasaran”. Pertanyaan yang paling banyak didukung naik ke atas antrean di layar.</p>
+    <div class="phone">
+      <div class="ph-status"><span>10.15</span><span>4G ▮▮▮</span></div>
+      <div class="feed-head">
+        <span class="av" id="feed-me" style="width:40px;height:40px"></span>
+        <div class="t"><b>Akhlak dalam Kehidupan Sehari-hari</b><span id="feed-sub">6 pertanyaan · Kelompok 3</span></div>
+        <button class="btn sm sun" data-go="form">+ Tanya</button>
+      </div>
+      <div class="tabs" id="ftabs"><button aria-pressed="true" data-s="top">🔥 Terpopuler</button><button aria-pressed="false" data-s="new">Terbaru</button></div>
+      <div class="ph-scroll"><div class="flist" id="flist"></div></div>
+      <div class="react-bar" id="rbar"><span>Kirim<br>reaksi</span><button data-r="👏">👏</button><button data-r="🔥">🔥</button><button data-r="🤯">🤯</button><button data-r="😂">😂</button><button data-r="🤲">🤲</button></div>
+    </div>
+    <p class="note"><b>Coba</b>Tekan tombol dukungan, lalu kirim reaksi. Kalau kamu sudah mengirim pertanyaan di layar 01, kartumu punya tombol Edit dan Tarik. Keduanya terkunci saat pertanyaan sedang dibahas, sudah dijawab, atau sesi ditutup.</p>
+  </div>
+</section>
+
+<!-- ======================= 03 PANEL ======================= -->
+<section class="screen" id="s-panel">
+  <div class="p-wrap">
+    <div class="p-nav"><span class="brand"><i></i>Ruang Tanya</span><span class="label">Semua sesi / Akhlak</span></div>
+    <div class="p-head">
+      <div><span class="label">Pendidikan Agama Islam · Kelompok 3 · Selasa, 10 November 2026</span><h1>Akhlak dalam Kehidupan Sehari-hari</h1></div>
+      <div class="stats">
+        <div class="stat"><b id="st-q">5</b><span>pertanyaan</span></div>
+        <div class="stat"><b id="st-w">3</b><span>siap Word</span></div>
+        <div class="stat"><b id="st-v">0</b><span>dukungan</span></div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <button class="switch" id="sw" aria-pressed="true"><span class="tr"></span><span id="sw-t">Sesi dibuka</span></button>
+      <span class="url">qna.domainmu.com/akhlak</span>
+      <button class="linkish" id="copy">Salin link</button>
+      <span class="grow"></span>
+      <button class="btn sm" id="all-ai">Pakai AI untuk semua</button>
+      <button class="btn sm sun" data-go="live">Buka layar presentasi ↗</button>
+      <button class="btn sm dark" data-go="word">Pratinjau &amp; unduh Word</button>
+    </div>
+    <div id="plist"></div>
+    <div class="p-add"><span>Ada pertanyaan lisan atau dari WA?</span><button class="btn sm" id="add-manual">+ Tambah pertanyaan manual</button></div>
+  </div>
+</section>
+
+<!-- ======================= 04 LIVE ======================= -->
+<section class="screen" id="s-live">
+  <div class="lv">
+    <div class="lv-top">
+      <span class="brand"><i></i>Ruang Tanya</span>
+      <span class="lv-title">Akhlak dalam Kehidupan Sehari-hari · Kelompok 3</span>
+      <div class="lv-join"><svg class="qr" id="qr1" viewBox="0 0 29 29" shape-rendering="crispEdges"></svg><div><span>Ikut bertanya di</span><b>qna.domainmu.com/akhlak</b></div></div>
+      <div class="lv-count"><b id="lv-n">5</b><span>pertanyaan</span></div>
+    </div>
+    <div class="lv-main">
+      <div class="spotlight" id="spot"></div>
+      <div class="queue"><h3><span>Antrean</span><span>urut dukungan</span></h3><div id="lqueue" style="display:grid;gap:12px"></div></div>
+    </div>
+  </div>
+  <div class="new-pop" id="new-pop"></div>
+  <div class="float-layer" id="floats"></div>
+  <div class="podium" id="podium"></div>
+  <div class="lv-ctl"><button data-go="panel">← Panel</button><button id="next">Bahas berikutnya</button><button id="pod-btn">Tampilkan podium</button></div>
+</section>
+
+<!-- ======================= 05 WORD ======================= -->
+<section class="screen" id="s-word">
+  <div class="w-bar">
+    <div><span class="label">Pratinjau</span><h2>Rekap_Tanya_Jawab_Akhlak_2026-11-10.docx</h2></div>
+    <div class="r"><button class="btn" data-go="panel">← Panel</button><button class="btn go" id="dl">Unduh .docx</button></div>
+  </div>
+  <div class="warn" id="warn"></div>
+  <div class="page" id="page"></div>
+</section>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ===================== AVATARS ===================== */
+const AV = [
+  { name: "Si Kepo",        bg: "#FFC93C", shape: "circle",   eyes: "big",     mouth: "o",        acc: "antenna" },
+  { name: "Kak Ambis",      bg: "#5B9DFF", shape: "squircle", eyes: "glasses", mouth: "smile",    acc: "none" },
+  { name: "Mas Ngantuk",    bg: "#A7E07A", shape: "blob",     eyes: "sleepy",  mouth: "flat",     acc: "cap" },
+  { name: "Bang Santuy",    bg: "#3DD6B0", shape: "circle",   eyes: "wink",    mouth: "grin",     acc: "headphone" },
+  { name: "Neng Ceria",     bg: "#FFD6B0", shape: "circle",   eyes: "star",    mouth: "open",     acc: "kerudung" },
+  { name: "Si Paling Kritis", bg: "#FF5B3A", shape: "squircle", eyes: "angry", mouth: "flat",     acc: "none" },
+  { name: "Profesor Mini",  bg: "#F4F1E8", shape: "circle",   eyes: "glasses", mouth: "mustache", acc: "peci" },
+  { name: "Alien Nyasar",   bg: "#A7E07A", shape: "blob",     eyes: "three",   mouth: "smile",    acc: "antenna2" },
+  { name: "Hantu Absen",    bg: "#FFFFFF", shape: "ghost",    eyes: "dot",     mouth: "o",        acc: "none" },
+  { name: "Raja Nanya",     bg: "#FF9ECF", shape: "squircle", eyes: "dot",     mouth: "grin",     acc: "crown" },
+  { name: "Kucing Oren",    bg: "#FF9A3C", shape: "circle",   eyes: "cat",     mouth: "cat",      acc: "ears" },
+  { name: "Si Kalem",       bg: "#B8D8FF", shape: "blob",     eyes: "sleepy",  mouth: "smile",    acc: "kerudung2" },
+];
+function avatar(i) {
+  const a = AV[i], S = 'stroke="#121212" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"';
+  let back = "", body = "", top = "", eyes = "", mouth = "";
+  if (a.acc === "ears") back = `<path d="M12 26 L14 6 L28 16z" fill="${a.bg}" ${S}/><path d="M52 26 L50 6 L36 16z" fill="${a.bg}" ${S}/>`;
+  if (a.acc === "kerudung") back = `<path d="M5 62 C3 30, 12 6, 32 6 C52 6, 61 30, 59 62z" fill="#3D5AFE" ${S}/>`;
+  if (a.acc === "kerudung2") back = `<path d="M5 62 C3 30, 12 6, 32 6 C52 6, 61 30, 59 62z" fill="#2E2E2E" ${S}/>`;
+  if (a.acc === "headphone") back = `<path d="M9 34 C9 6, 55 6, 55 34" fill="none" stroke="#121212" stroke-width="4"/>`;
+  const kr = a.acc && a.acc.startsWith("kerudung");
+  if (a.shape === "circle") body = `<circle cx="32" cy="${kr ? 37 : 35}" r="${kr ? 19 : 24}" fill="${a.bg}" ${S}/>`;
+  if (a.shape === "squircle") body = `<rect x="9" y="11" width="46" height="46" rx="16" fill="${a.bg}" ${S}/>`;
+  if (a.shape === "blob") body = kr ? `<ellipse cx="32" cy="37" rx="19" ry="20" fill="${a.bg}" ${S}/>` : `<path d="M32 10c15 0 24 9 23 24s-9 23-23 23S8 49 9 33 17 10 32 10z" fill="${a.bg}" ${S}/>`;
+  if (a.shape === "ghost") body = `<path d="M11 32c0-13 9-22 21-22s21 9 21 22v24l-5-4-5 4-5-4-6 4-5-4-5 4-5-4-6 4z" fill="${a.bg}" ${S}/>`;
+  const ey = 32;
+  const star = (x, y) => `<path d="M${x} ${y - 4.5}L${x + 1.6} ${y - 1.6}L${x + 4.5} ${y}L${x + 1.6} ${y + 1.6}L${x} ${y + 4.5}L${x - 1.6} ${y + 1.6}L${x - 4.5} ${y}L${x - 1.6} ${y - 1.6}z" fill="#121212"/>`;
+  switch (a.eyes) {
+    case "dot": eyes = `<circle cx="24" cy="${ey}" r="3" fill="#121212"/><circle cx="40" cy="${ey}" r="3" fill="#121212"/>`; break;
+    case "big": eyes = `<circle cx="23" cy="${ey - 1}" r="7" fill="#fff" ${S}/><circle cx="41" cy="${ey - 1}" r="7" fill="#fff" ${S}/><circle cx="25" cy="${ey}" r="3.2" fill="#121212"/><circle cx="43" cy="${ey}" r="3.2" fill="#121212"/>`; break;
+    case "sleepy": eyes = `<path d="M19 ${ey} q5 4 10 0" fill="none" ${S}/><path d="M35 ${ey} q5 4 10 0" fill="none" ${S}/>`; break;
+    case "glasses": eyes = `<circle cx="23" cy="${ey}" r="6.5" fill="#fff" ${S}/><circle cx="41" cy="${ey}" r="6.5" fill="#fff" ${S}/><path d="M29.5 ${ey} h5" ${S}/><circle cx="23" cy="${ey}" r="2.3" fill="#121212"/><circle cx="41" cy="${ey}" r="2.3" fill="#121212"/>`; break;
+    case "wink": eyes = `<circle cx="24" cy="${ey}" r="3" fill="#121212"/><path d="M36 ${ey + 1} q4 -5 8 0" fill="none" ${S}/>`; break;
+    case "star": eyes = star(24, ey) + star(40, ey); break;
+    case "angry": eyes = `<circle cx="24" cy="${ey + 1}" r="3" fill="#121212"/><circle cx="40" cy="${ey + 1}" r="3" fill="#121212"/><path d="M18 ${ey - 7} L28 ${ey - 4}" ${S}/><path d="M46 ${ey - 7} L36 ${ey - 4}" ${S}/>`; break;
+    case "three": eyes = `<circle cx="20" cy="${ey}" r="3.6" fill="#fff" ${S}/><circle cx="32" cy="${ey - 4}" r="4.4" fill="#fff" ${S}/><circle cx="44" cy="${ey}" r="3.6" fill="#fff" ${S}/><circle cx="20" cy="${ey}" r="1.5" fill="#121212"/><circle cx="32" cy="${ey - 4}" r="1.8" fill="#121212"/><circle cx="44" cy="${ey}" r="1.5" fill="#121212"/>`; break;
+    case "cat": eyes = `<ellipse cx="24" cy="${ey}" rx="2.4" ry="4" fill="#121212"/><ellipse cx="40" cy="${ey}" rx="2.4" ry="4" fill="#121212"/>`; break;
+  }
+  const my = 44;
+  switch (a.mouth) {
+    case "smile": mouth = `<path d="M24 ${my - 2} q8 8 16 0" fill="none" ${S}/>`; break;
+    case "open": mouth = `<path d="M25 ${my - 3} h14 q0 9 -7 9 q-7 0 -7 -9z" fill="#121212" ${S}/><path d="M28 ${my + 3} q4 -3 8 0" fill="#FF7A9C"/>`; break;
+    case "o": mouth = `<circle cx="32" cy="${my}" r="3.4" fill="#121212"/>`; break;
+    case "flat": mouth = `<path d="M26 ${my} h12" ${S}/>`; break;
+    case "grin": mouth = `<path d="M22 ${my - 3} h20 q0 10 -10 10 q-10 0 -10 -10z" fill="#fff" ${S}/><path d="M32 ${my - 3} v6" ${S} stroke-width="1.5"/>`; break;
+    case "mustache": mouth = `<path d="M21 ${my - 1} q5 -6 11 -1 q6 -5 11 1 q-5 4 -11 1 q-6 3 -11 -1z" fill="#121212"/>`; break;
+    case "cat": mouth = `<path d="M26 ${my - 2} q3 4 6 0 q3 4 6 0" fill="none" ${S}/><path d="M30 ${my - 6} h4 l-2 2z" fill="#121212"/>`; break;
+  }
+  const blush = a.shape === "ghost" ? "" : `<circle cx="16.5" cy="40" r="3.4" fill="#FF7A9C" opacity=".45"/><circle cx="47.5" cy="40" r="3.4" fill="#FF7A9C" opacity=".45"/>`;
+  switch (a.acc) {
+    case "antenna": top = `<path d="M32 11 V3" ${S}/><circle cx="32" cy="3" r="3.4" fill="#FF5B3A" ${S}/>`; break;
+    case "antenna2": top = `<path d="M24 11 L20 2" ${S}/><path d="M40 11 L44 2" ${S}/><circle cx="20" cy="2" r="3" fill="#FF9ECF" ${S}/><circle cx="44" cy="2" r="3" fill="#FF9ECF" ${S}/>`; break;
+    case "peci": top = `<path d="M17 18 L19 6 H45 L47 18 Q32 14 17 18z" fill="#121212" ${S}/>`; break;
+    case "cap": top = `<path d="M13 22 C13 6, 51 6, 51 22z" fill="#FF5B3A" ${S}/><path d="M30 20 h28 a3 3 0 0 1 0 5 h-28z" fill="#FF5B3A" ${S}/>`; break;
+    case "crown": top = `<path d="M18 16 L20 2 L27 10 L32 0 L37 10 L44 2 L46 16z" fill="#FFC93C" ${S}/>`; break;
+    case "headphone": top = `<rect x="4" y="27" width="9" height="16" rx="4" fill="#FF5B3A" ${S}/><rect x="51" y="27" width="9" height="16" rx="4" fill="#FF5B3A" ${S}/>`; break;
+  }
+  return `<svg viewBox="-2 -4 68 68" aria-hidden="true">${back}${body}${blush}${eyes}${mouth}${top}</svg>`;
+}
+const avEl = (i, size) => `<span class="av" style="width:${size}px;height:${size}px">${avatar(i)}</span>`;
+
+/* ===================== DATA ===================== */
+const qs = [
+  { no: 1, av: 4, nama: "Siti Aminah", nim: "2310511023", kel: "2", jam: "10.02", show: "nama", votes: 9,
+    q: "Apa perbedaan akhlak, etika, dan moral? Bukankah ketiganya sama saja?",
+    ai: "Ketiganya sama-sama membahas baik dan buruknya perbuatan, tetapi sumber ukurannya berbeda. Akhlak bersumber dari wahyu, yaitu Al-Qur'an dan sunnah, sehingga nilainya tetap. Etika bersumber dari pemikiran atau akal, sedangkan moral bersumber dari kebiasaan masyarakat. Karena itu etika dan moral bisa berubah mengikuti zaman, sementara akhlak menjadi patokan yang tetap bagi seorang Muslim.",
+    pen: "Menurut saya akhlak lebih ke perilaku yang sudah jadi kebiasaan, kalau etika lebih ke aturan sopan santun.",
+    me: "", pick: null, ai_s: "ok", hidden: false, done: true },
+  { no: 2, av: 3, nama: "Rizky Pratama", nim: "2310511041", kel: "5", jam: "10.05", show: "alias", votes: 14,
+    q: "Bagaimana menjaga akhlak saat berdebat di media sosial, terutama kalau lawan bicara sudah kasar duluan?",
+    ai: "Islam mengajarkan untuk tetap berkata baik meskipun dibalas dengan keburukan. Saat berdebat, fokuslah pada isi pendapat, bukan menyerang pribadi. Jika diskusi sudah tidak sehat, meninggalkannya justru lebih utama daripada membalas kekasaran. Rasulullah diutus untuk menyempurnakan akhlak yang mulia (HR. Ahmad), dan itu berlaku juga di ruang digital.",
+    pen: "", me: "Kuncinya menahan diri. Kita boleh menyampaikan pendapat, tapi dengan bahasa yang santun dan data yang jelas. Kalau lawan bicara sudah kasar, lebih baik berhenti membalas daripada ikut terpancing.",
+    pick: null, ai_s: "ok", hidden: false, done: false },
+  { no: 3, av: 1, nama: "Nabila Putri", nim: "2310511007", kel: "1", jam: "10.07", show: "nama", votes: 6,
+    q: "Apakah akhlak bisa diubah, atau sudah bawaan sejak lahir?",
+    ai: "Akhlak bisa dibentuk dan diubah. Para ulama, seperti Imam al-Ghazali, menjelaskan bahwa akhlak dapat diperbaiki melalui latihan dan pembiasaan. Seandainya akhlak tidak bisa diubah, tentu nasihat dan pendidikan tidak ada gunanya. Lingkungan, ilmu, dan kesungguhan diri berperan besar dalam membentuk akhlak seseorang.",
+    pen: "Bisa diubah, karena manusia diberi akal untuk belajar. Contohnya orang yang tadinya pemarah bisa jadi sabar setelah rajin ikut kajian.",
+    me: "", pick: "pen", ai_s: "ok", hidden: false, done: false },
+  { no: 4, av: 5, nama: "Dimas Ardiansyah", nim: "2310511052", kel: "4", jam: "10.10", show: "alias", votes: 11,
+    q: "Kalau seseorang rajin ibadah tapi akhlaknya buruk, bagaimana pandangan Islam?",
+    ai: "", pen: "", me: "", pick: null, ai_s: "work", hidden: false, done: false },
+  { no: 5, av: 10, nama: "Fajar Nugroho", nim: "2310511033", kel: "6", jam: "10.12", show: "nama", votes: 3,
+    q: "Apa contoh akhlak terhadap lingkungan yang bisa dilakukan mahasiswa di kampus?",
+    ai: "", pen: "", me: "", pick: null, ai_s: "fail", hidden: false, done: false },
+];
+const LATE = {
+  4: "Ibadah dan akhlak tidak bisa dipisahkan. Ibadah yang benar seharusnya membuahkan akhlak yang baik; shalat, misalnya, disebut mencegah perbuatan keji dan mungkar. Jika seseorang rajin ibadah tetapi akhlaknya buruk, itu tanda ibadahnya belum memberi pengaruh dan perlu diperbaiki, bukan alasan untuk meninggalkan ibadah.",
+  5: "Contohnya membuang sampah pada tempatnya, menghemat listrik dan air di kelas, merawat fasilitas kampus, dan mengurangi plastik sekali pakai. Islam memandang manusia sebagai khalifah di bumi yang bertugas menjaga, bukan merusak.",
+  6: "Tegurlah secara pribadi, bukan di depan orang lain, agar ia tidak merasa dipermalukan. Gunakan bahasa yang lembut, mulai dengan menyebut kebaikannya, lalu sampaikan hal yang perlu diperbaiki tanpa menghakimi. Teguran yang tulus dan santun lebih mudah diterima daripada kritik yang keras."
+};
+let me = { av: 0, sent: false, myNo: null };
+const voted = new Set();
+let spotNo = 2;
+let sortMode = "top";
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pad = n => String(n).padStart(2, "0");
+const disp = q => q.show === "alias" ? AV[q.av].name : q.nama;
+const chosen = q => q.pick || (q.me.trim() ? "me" : q.ai ? "ai" : null);
+const chosenText = q => ({ me: q.me, pen: q.pen, ai: q.ai })[chosen(q)] || "";
+const visible = () => qs.filter(q => !q.hidden && !q.ditarik);
+let sessionOpen = true;
+const byVotes = () => visible().slice().sort((a, b) => b.votes - a.votes || a.no - b.no);
+
+function toast(m) { const t = $("#toast"); t.textContent = m; t.classList.add("show"); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("show"), 2600); }
+
+/* ===================== NAV ===================== */
+function go(n) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === "s-" + n));
+  document.querySelectorAll(".mock-bar button").forEach(b => b.setAttribute("aria-current", b.dataset.go === n));
+  if (n === "word") renderWord();
+  if (n === "live") renderLive();
+  window.scrollTo(0, 0);
+}
+document.addEventListener("click", e => { const g = e.target.closest("[data-go]"); if (g) go(g.dataset.go); });
+
+/* ===================== 01 FORM ===================== */
+function renderPicker() {
+  $("#av-pick").innerHTML = AV.map((a, i) => `<button type="button" class="av-opt ${i === me.av ? "on" : ""}" data-av="${i}" aria-label="${a.name}" aria-pressed="${i === me.av}">${avEl(i, 0).replace('style="width:0px;height:0px"', "")}</button>`).join("");
+  $("#av-cur").innerHTML = avatar(me.av);
+  $("#av-cur-n").textContent = AV[me.av].name;
+  $("#feed-me").innerHTML = avatar(me.av);
+  $("#seg [data-v=alias]").textContent = AV[me.av].name;
+}
+$("#av-pick").addEventListener("click", e => { const b = e.target.closest("[data-av]"); if (!b) return; me.av = +b.dataset.av; renderPicker(); });
+$("#shuffle").onclick = () => { let n; do { n = Math.floor(Math.random() * AV.length); } while (n === me.av); me.av = n; renderPicker(); };
+$("#seg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; [...$("#seg").children].forEach(x => x.setAttribute("aria-pressed", x === b)); });
+function renderCrowd() {
+  const v = visible();
+  $("#crowd").innerHTML = v.slice(-5).map(q => avEl(q.av, 28)).join("");
+  $("#crowd-t").textContent = `${v.length} teman sudah bertanya`;
+}
+
+$("#ask").onsubmit = e => {
+  e.preventDefault();
+  const show = $("#seg [aria-pressed=true]").dataset.v;
+  const q = { no: qs.length + 1, av: me.av, nama: $("#nama").value, nim: $("#nim").value, kel: $("#kel").value, jam: "10.14", show, votes: 0,
+    q: $("#tanya").value.trim() || "(pertanyaan kosong)", ai: "", pen: $("#jwb").value.trim(), me: "", pick: null, ai_s: "work", hidden: false, done: false, fresh: true, mine: true };
+  qs.push(q); me.sent = true; me.myNo = q.no; clearTimeout(autoNew);
+  if (!LATE[q.no]) LATE[q.no] = LATE[6];
+  $("#succ-av").innerHTML = avatar(me.av);
+  $("#success h2").textContent = `Terkirim! Kamu penanya ke-${q.no}`;
+  $("#form-view").style.display = "none"; $("#success").classList.add("show"); $("#form-scroll").scrollTop = 0;
+  announce(q); finishAI(q.no, 4500); renderAll();
+};
+$("#again").onclick = () => { $("#success").classList.remove("show"); $("#form-view").style.display = ""; $("#tanya").value = ""; $("#jwb").value = ""; $("#tanya").focus(); };
+
+/* ===================== 02 FEED ===================== */
+let editingNo = null, confirmNo = null;
+function renderFeed() {
+  const list = sortMode === "top" ? byVotes() : visible().slice().reverse();
+  $("#feed-sub").textContent = `${visible().length} pertanyaan · Kelompok 3`;
+  $("#flist").innerHTML = list.map(q => {
+    const on = voted.has(q.no), mine = q.no === me.myNo;
+    const status = q.no === spotNo ? '<span class="chip live">Sedang dibahas</span>' : q.done ? '<span class="chip done">Sudah dijawab</span>' : "";
+    const locked = q.no === spotNo ? "sedang dibahas" : q.done ? "sudah dijawab" : !sessionOpen ? "sesi ditutup" : "";
+    let body = `<p>${esc(q.q)}</p>`, bot;
+    if (mine && editingNo === q.no) {
+      body = `<textarea class="edit" id="edit-t" rows="4">${esc(q.q)}</textarea>`;
+      bot = `<span class="own-acts"><button class="btn sm go" data-save="${q.no}">Simpan</button><button class="btn sm" data-cancel>Batal</button></span><span class="lock">AI akan menjawab ulang</span>`;
+    } else if (mine && confirmNo === q.no) {
+      bot = `<span class="confirm">Tarik pertanyaan ini?</span><span class="own-acts"><button class="btn sm go" data-yes="${q.no}">Ya, tarik</button><button class="btn sm" data-cancel>Batal</button></span>`;
+    } else if (mine) {
+      bot = `<span class="plus" style="cursor:default"><span class="n">${q.votes}</span>dukungan</span>` +
+        (locked ? `<span class="lock">🔒 Terkunci: ${locked}</span>`
+                : `<span class="own-acts"><button class="linkish" data-edit="${q.no}">Edit</button><button class="linkish" data-withdraw="${q.no}">Tarik</button></span>`);
+    } else {
+      bot = `<button class="plus ${on ? "on" : ""}" data-vote="${q.no}"><span class="n">${q.votes}</span>${on ? "Kamu juga penasaran" : "Aku juga penasaran"}</button>`;
+    }
+    return `<div class="fq ${mine ? "mine" : ""} ${q.no === spotNo ? "spot" : ""}">
+      <div class="fq-top">${avEl(q.av, 34)}<span class="nm">${esc(disp(q))}${mine ? " (kamu)" : ""}<small>${q.jam}${q.edited ? " · diedit" : ""}</small></span>${mine && !status ? '<span class="mini-badge">PERTANYAANMU</span>' : status}</div>
+      ${body}
+      <div class="fq-bot">${bot}</div>
+    </div>`;
+  }).join("");
+  const t = $("#edit-t"); if (t) { t.focus(); t.setSelectionRange(t.value.length, t.value.length); }
+}
+$("#ftabs").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; sortMode = b.dataset.s; [...$("#ftabs").children].forEach(x => x.setAttribute("aria-pressed", x === b)); renderFeed(); });
+$("#flist").addEventListener("click", e => {
+  const ed = e.target.closest("[data-edit]"); if (ed) { editingNo = +ed.dataset.edit; confirmNo = null; renderFeed(); return; }
+  const wd = e.target.closest("[data-withdraw]"); if (wd) { confirmNo = +wd.dataset.withdraw; editingNo = null; renderFeed(); return; }
+  if (e.target.closest("[data-cancel]")) { editingNo = confirmNo = null; renderFeed(); return; }
+  const sv = e.target.closest("[data-save]");
+  if (sv) {
+    const q = qs.find(x => x.no == sv.dataset.save), v = $("#edit-t").value.trim();
+    editingNo = null;
+    if (v && v !== q.q) {
+      q.q = v; q.edited = true; if (q.me.trim()) q.needCheck = true;
+      q.ai = ""; q.ai_s = "work"; finishAI(q.no, 3500);
+      toast("Pertanyaan diperbarui. AI menjawab ulang.");
+    }
+    renderAll(); return;
+  }
+  const yes = e.target.closest("[data-yes]");
+  if (yes) {
+    const q = qs.find(x => x.no == yes.dataset.yes); q.ditarik = true; confirmNo = null;
+    if (spotNo === q.no) spotNo = null;
+    renderAll(); toast("Pertanyaan ditarik. Tidak tampil di feed, layar, dan Word."); return;
+  }
+  const b = e.target.closest("[data-vote]"); if (!b) return;
+  const q = qs.find(x => x.no == b.dataset.vote);
+  if (voted.has(q.no)) { voted.delete(q.no); q.votes--; } else { voted.add(q.no); q.votes++; }
+  renderAll();
+  const nb = $(`[data-vote="${q.no}"]`); if (nb) nb.classList.add("bump");
+});
+$("#rbar").addEventListener("click", e => {
+  const b = e.target.closest("[data-r]"); if (!b) return;
+  const p = document.createElement("span"); p.className = "pop-react"; p.textContent = b.dataset.r;
+  const r = b.getBoundingClientRect(), pr = $("#s-feed .phone").getBoundingClientRect();
+  p.style.left = (r.left - pr.left + 8) + "px"; p.style.top = (r.top - pr.top - 10) + "px";
+  $("#s-feed .phone").appendChild(p); setTimeout(() => p.remove(), 1100);
+  floatReact(b.dataset.r, true);
+});
+
+/* ===================== 03 PANEL ===================== */
+function col(q, key, title) {
+  const on = chosen(q) === key;
+  let body, acts = "";
+  if (key === "ai") {
+    if (q.ai_s === "work") body = '<span class="st work">AI sedang menjawab…</span><div class="skel"><i></i><i></i><i></i><i></i></div>';
+    else if (q.ai_s === "fail") body = '<span class="st fail">Gagal: kuota sementara habis.</span>';
+    else body = `<div class="col-body">${esc(q.ai)}</div>`;
+    acts = q.ai_s === "fail" ? `<button class="linkish" data-act="retry" data-no="${q.no}">Coba lagi</button>`
+      : q.ai_s === "ok" ? `<button class="linkish" data-act="regen" data-no="${q.no}">Buat ulang</button><button class="linkish" data-act="copy" data-no="${q.no}">Salin ke Saya</button>` : "";
+  } else if (key === "pen") {
+    body = q.pen ? `<div class="col-body">${esc(q.pen)}</div>` : '<div class="col-body empty">Penanya tidak mengisi.</div>';
+  } else {
+    body = `${q.needCheck ? '<div class="flag">Pertanyaan diubah penanya. Cek lagi jawabanmu.</div>' : ""}<textarea data-me="${q.no}" placeholder="Tulis jawabanmu sendiri…">${esc(q.me)}</textarea>`;
+    acts = `<span class="saved" id="sv-${q.no}">${q.me ? "Tersimpan" : ""}</span>`;
+  }
+  const can = key === "ai" ? !!q.ai : key === "pen" ? !!q.pen : !!q.me.trim();
+  return `<div class="col ${key}"><div class="col-h"><span class="label">${title}</span>${on ? '<span class="stamp">MASUK WORD</span>' : ""}</div>${body}
+    <div class="col-f"><button class="pick ${on ? "on" : ""}" data-pick="${key}" data-no="${q.no}" ${can ? "" : "disabled"}><span class="bx"></span>Masuk Word</button><span class="acts">${acts}</span></div></div>`;
+}
+function renderPanel() {
+  $("#plist").innerHTML = qs.map(q => `
+    <article class="pq ${q.hidden || q.ditarik ? "hidden" : ""} ${q.fresh ? "fresh" : ""} ${q.no === spotNo ? "spot" : ""}">
+      <div class="pq-top">
+        <span class="pq-no">${pad(q.no)}</span>${avEl(q.av, 56)}
+        <div><div class="pq-who"><b>${esc(q.nama)}</b><span>${q.nim}</span><span>Kel. ${q.kel}</span><span>${q.jam}</span>${q.show === "alias" ? `<span class="chip">tampil sebagai ${esc(AV[q.av].name)}</span>` : ""}${q.edited ? '<span class="chip">diedit penanya</span>' : ""}${q.ditarik ? '<span class="chip live">Ditarik penanya</span>' : ""}</div>
+          <p class="pq-text">${esc(q.q)}</p></div>
+        <div class="pq-side">
+          <span class="chip sun">🔥 ${q.votes} penasaran</span>
+          ${q.no === spotNo ? '<span class="chip live">Di layar</span>' : `<button class="btn sm" data-act="spot" data-no="${q.no}">Tampilkan di layar</button>`}
+          <span class="menu-wrap"><button class="linkish" data-menu="${q.no}" aria-label="Menu">••• lainnya</button>
+            <span class="menu" id="m-${q.no}">
+              <button data-act="done" data-no="${q.no}">${q.done ? "Tandai belum dijawab" : "Tandai sudah dijawab"}</button>
+              <button data-act="edit" data-no="${q.no}">Ubah pertanyaan / data penanya</button>
+              <button data-act="hide" data-no="${q.no}">${q.hidden ? "Tampilkan lagi" : "Sembunyikan (spam/dobel)"}</button>
+            </span></span>
+        </div>
+      </div>
+      <div class="cols">${col(q, "ai", "Jawaban AI")}${col(q, "pen", "Versi penanya")}${col(q, "me", "Versi saya")}</div>
+    </article>`).join("");
+  const v = visible();
+  $("#st-q").textContent = v.length;
+  $("#st-w").textContent = v.filter(chosen).length;
+  $("#st-v").textContent = v.reduce((s, q) => s + q.votes, 0);
+}
+$("#plist").addEventListener("click", e => {
+  const m = e.target.closest("[data-menu]");
+  document.querySelectorAll(".menu.show").forEach(x => { if (!m || x.id !== "m-" + m.dataset.menu) x.classList.remove("show"); });
+  if (m) { $("#m-" + m.dataset.menu).classList.toggle("show"); return; }
+  const p = e.target.closest("[data-pick]");
+  if (p && !p.disabled) { qs.find(x => x.no == p.dataset.no).pick = p.dataset.pick; renderAll(); return; }
+  const a = e.target.closest("[data-act]"); if (!a) return;
+  const q = qs.find(x => x.no == a.dataset.no);
+  switch (a.dataset.act) {
+    case "copy": q.me = q.ai; q.pick = "me"; renderAll(); $(`[data-me="${q.no}"]`).focus(); toast("Jawaban AI disalin ke Versi saya. Silakan edit."); break;
+    case "regen": case "retry": if (!LATE[q.no]) LATE[q.no] = q.ai; q.ai = ""; q.ai_s = "work"; renderAll(); finishAI(q.no, 2500); break;
+    case "spot": setSpot(q.no); toast(`Pertanyaan ${pad(q.no)} tampil besar di layar presentasi.`); break;
+    case "done": q.done = !q.done; renderAll(); break;
+    case "hide": q.hidden = !q.hidden; renderAll(); toast(q.hidden ? "Disembunyikan dari layar, feed, dan Word." : "Ditampilkan lagi."); break;
+    case "edit": toast("Di versi asli: jendela untuk mengubah pertanyaan, nama, NIM, kelompok, dan avatar."); break;
+  }
+});
+let saveT;
+$("#plist").addEventListener("input", e => {
+  const t = e.target.closest("[data-me]"); if (!t) return;
+  const q = qs.find(x => x.no == t.dataset.me); q.me = t.value; if (q.needCheck) { q.needCheck = false; const fl = t.previousElementSibling; if (fl && fl.classList.contains("flag")) fl.remove(); }
+  $("#sv-" + q.no).textContent = "Menyimpan…"; clearTimeout(saveT); saveT = setTimeout(() => { const s = $("#sv-" + q.no); if (s) s.textContent = "Tersimpan"; }, 700);
+  $(`[data-pick="me"][data-no="${q.no}"]`).disabled = !q.me.trim();
+});
+$("#sw").onclick = () => { const on = $("#sw").getAttribute("aria-pressed") !== "true"; sessionOpen = on; renderAll(); $("#sw").setAttribute("aria-pressed", on); $("#sw-t").textContent = on ? "Sesi dibuka" : "Sesi ditutup"; toast(on ? "Form menerima pertanyaan lagi." : "Form ditutup. Penanya melihat pesan “Sesi sudah ditutup”."); };
+$("#copy").onclick = () => toast("Link disalin. Tempel ke grup WA.");
+$("#all-ai").onclick = () => { qs.forEach(q => { if (q.ai) q.pick = "ai"; }); renderAll(); toast("Semua pertanyaan memakai jawaban AI."); };
+$("#add-manual").onclick = () => toast("Di versi asli: form yang sama dengan form penanya, diisi olehmu.");
+
+/* ===================== 04 LIVE ===================== */
+function qr(el) {
+  let s = 11, c = ""; const r = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+  const f = (x, y) => `<rect x="${x}" y="${y}" width="7" height="7"/><rect x="${x + 1}" y="${y + 1}" width="5" height="5" fill="#fff"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3"/>`;
+  for (let y = 0; y < 29; y++) for (let x = 0; x < 29; x++) { const inF = (x < 8 && y < 8) || (x > 20 && y < 8) || (x < 8 && y > 20); if (!inF && r() > .52) c += `<rect x="${x}" y="${y}" width="1" height="1"/>`; }
+  el.innerHTML = `<g fill="#121212">${c}${f(0, 0)}${f(22, 0)}${f(0, 22)}</g>`;
+}
+qr($("#qr1"));
+function setSpot(no) { spotNo = no; const q = qs.find(x => x.no === no); if (q) q.done = false; renderAll(); const s = $("#spot"); s.classList.remove("swap"); void s.offsetWidth; s.classList.add("swap"); }
+function renderLive() {
+  const v = visible();
+  $("#lv-n").textContent = v.length;
+  const s = qs.find(q => q.no === spotNo && !q.hidden);
+  $("#spot").className = "spotlight" + (s ? "" : " empty");
+  $("#spot").innerHTML = s
+    ? `<span class="chip">Sedang dibahas · No. ${pad(s.no)}</span><p class="spot-q">${esc(s.q)}</p>
+       <div class="spot-who">${avEl(s.av, 74)}<div><b>${esc(disp(s))}</b><span>Kelompok ${s.kel}</span></div><span class="votes">🔥 ${s.votes}</span></div>`
+    : `<div><p class="spot-q" style="margin:0">Pindai QR dan kirim pertanyaanmu!</p></div>`;
+  $("#lqueue").innerHTML = byVotes().filter(q => q.no !== spotNo).slice(0, 5).map(q =>
+    `<div class="lq ${q.fresh ? "new" : ""} ${q.done ? "done" : ""}">${avEl(q.av, 48)}<div><small>${esc(disp(q))}${q.done ? " · sudah dijawab" : ""}</small><p>${esc(q.q)}</p></div><span class="v">${q.votes}</span></div>`).join("");
+}
+function floatReact(r, fromMe) {
+  const f = document.createElement("span"); f.className = "flo"; f.textContent = r;
+  f.style.left = (10 + Math.random() * 80) + "%"; f.style.setProperty("--dx", (Math.random() * 120 - 60) + "px");
+  if (fromMe) f.style.fontSize = "58px";
+  $("#floats").appendChild(f); setTimeout(() => f.remove(), 3700);
+}
+function announce(q) {
+  const p = $("#new-pop"); p.innerHTML = `${avEl(q.av, 36)} ${esc(disp(q))} baru bertanya!`;
+  p.classList.add("show"); setTimeout(() => p.classList.remove("show"), 3200);
+  if ($("#s-panel").classList.contains("on")) toast(`Pertanyaan baru masuk: nomor ${pad(q.no)}`);
+}
+$("#next").onclick = () => {
+  const cur = qs.find(q => q.no === spotNo); if (cur) cur.done = true;
+  const nx = byVotes().find(q => !q.done && q.no !== spotNo);
+  if (nx) setSpot(nx.no); else { spotNo = null; renderAll(); }
+};
+$("#pod-btn").onclick = () => {
+  const top = byVotes().slice(0, 3);
+  const order = [top[1], top[0], top[2]], cls = ["p2", "p1", "p3"], rank = [2, 1, 3];
+  const labs = ["PALING DIDUKUNG", "", "PENANYA KRITIS"];
+  $("#podium").innerHTML = `<h2>Penanya terbaik hari ini</h2><p>Berdasarkan dukungan teman sekelas</p>
+    <div class="pods">${order.map((q, i) => q ? `<div class="pod ${cls[i]}">${avEl(q.av, 96)}<b>${esc(disp(q))}</b><small>🔥 ${q.votes} dukungan</small><div class="blk">${rank[i]}</div></div>` : "").join("")}</div>
+    <p style="margin-top:28px"><button class="btn sun" id="pod-close">Tutup podium</button></p>`;
+  $("#podium").classList.add("show");
+  $("#pod-close").onclick = () => $("#podium").classList.remove("show");
+  for (let i = 0; i < 14; i++) setTimeout(() => floatReact(["👏", "🔥", "🎉"][i % 3]), i * 140);
+};
+
+/* ===================== 05 WORD ===================== */
+function renderWord() {
+  const v = visible(), miss = v.filter(q => !chosen(q));
+  $("#warn").className = "warn" + (miss.length ? "" : " ok");
+  $("#warn").innerHTML = miss.length
+    ? `<span><b>${miss.length} pertanyaan belum punya jawaban</b> (nomor ${miss.map(q => pad(q.no)).join(", ")}). Baris itu akan kosong di Word.</span><button class="btn sm" data-go="panel">Lengkapi di panel</button>`
+    : `<span><b>Semua ${v.length} pertanyaan sudah punya jawaban.</b> Siap diunduh.</span>`;
+  $("#page").innerHTML = `<h3>REKAPITULASI SESI TANYA JAWAB</h3>
+    <div class="ident"><div><b>Mata Kuliah</b><span>: Pendidikan Agama Islam</span></div><div><b>Topik</b><span>: Akhlak dalam Kehidupan Sehari-hari</span></div><div><b>Kelompok Penyaji</b><span>: Kelompok 3</span></div><div><b>Tanggal</b><span>: 10 November 2026</span></div><div><b>Jumlah Pertanyaan</b><span>: ${v.length}</span></div></div>
+    <table><thead><tr><th style="width:4%">No</th><th style="width:13%">Nama</th><th style="width:10%">NIM</th><th style="width:8%">Kelompok</th><th style="width:25%">Pertanyaan</th><th>Jawaban</th></tr></thead>
+    <tbody>${v.map((q, i) => `<tr><td class="c">${i + 1}</td><td>${esc(q.nama)}</td><td class="c">${q.nim}</td><td class="c">${q.kel}</td><td class="j">${esc(q.q)}</td>${chosen(q) ? `<td class="j">${esc(chosenText(q))}</td>` : '<td class="miss">Belum ada jawaban terpilih</td>'}</tr>`).join("")}</tbody></table>`;
+}
+$("#dl").onclick = () => toast("Di versi asli: file .docx langsung terunduh.");
+
+/* ===================== SIMULATION ===================== */
+function finishAI(no, ms) { setTimeout(() => { const q = qs.find(x => x.no === no); if (!q) return; q.ai = LATE[no]; q.ai_s = "ok"; renderAll(); }, ms); }
+function renderAll() {
+  renderPanel(); renderFeed(); renderLive(); renderCrowd();
+  qs.forEach(q => q.fresh = false);
+  if ($("#s-word").classList.contains("on")) renderWord();
+}
+const autoNew = setTimeout(() => {
+  if (me.sent) return;
+  const q = { no: qs.length + 1, av: 9, nama: "Aulia Rahma", nim: "2310511078", kel: "3", jam: "10.14", show: "alias", votes: 0,
+    q: "Bagaimana cara menegur teman yang akhlaknya kurang baik tanpa menyakiti hatinya?", ai: "", pen: "", me: "", pick: null, ai_s: "work", hidden: false, done: false, fresh: true };
+  qs.push(q); LATE[q.no] = LATE[6]; announce(q); finishAI(q.no, 4500); renderAll();
+}, 12000);
+setInterval(() => {   // teman lain ikut mendukung
+  const v = visible().filter(q => q.no !== me.myNo || Math.random() < .5); if (!v.length) return;
+  const q = v[Math.floor(Math.random() * v.length)]; q.votes++; renderAll();
+}, 4200);
+setInterval(() => { if ($("#s-live").classList.contains("on")) floatReact(["👏", "🔥", "🤯", "😂", "🤲"][Math.floor(Math.random() * 5)]); }, 1600);
+finishAI(4, 3500);
+
+renderPicker(); renderAll();
+if (location.hash) go(location.hash.slice(1));
+</script>
+</body>
+</html>
