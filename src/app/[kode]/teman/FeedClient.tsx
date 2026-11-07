@@ -7,6 +7,7 @@ import { REAKSI, api, getDeviceId, jam, loadProfil, saveProfil, useDebounced, us
 import { Avatar } from "@/components/Avatar";
 import { AvatarPicker } from "@/components/AvatarPicker";
 import { useToast } from "@/components/useToast";
+import { SiteFooter } from "@/components/SiteFooter";
 
 type Edit = { id: string; avatar: number; nama: string; nim: string; kelompok: string; tampil_sebagai: "nama" | "avatar"; pertanyaan: string; jawaban_penanya: string };
 
@@ -159,7 +160,7 @@ export default function FeedClient({ sesiAwal }: { sesiAwal: SesiPublik }) {
                   {galatEdit && <div className="galat" role="alert">{galatEdit}</div>}
                   <div className="fq-bot">
                     <span className="own-acts">
-                      <button className="btn sm go" disabled={sibuk} onClick={simpanEdit}>{sibuk ? "Menyimpan…" : "Simpan"}</button>
+                      <button className="btn sm go" disabled={sibuk} aria-busy={sibuk} onClick={simpanEdit}>{sibuk ? "Menyimpan…" : "Simpan"}</button>
                       <button className="btn sm" onClick={() => setEdit(null)}>Batal</button>
                     </span>
                     {edit.pertanyaan.trim() !== q.pertanyaan && <span className="lock">AI akan menjawab ulang</span>}
@@ -173,7 +174,7 @@ export default function FeedClient({ sesiAwal }: { sesiAwal: SesiPublik }) {
                       <>
                         <span className="confirm">Tarik pertanyaan ini?</span>
                         <span className="own-acts">
-                          <button className="btn sm go" disabled={sibuk} onClick={() => tarik(q.id)}>Ya, tarik</button>
+                          <button className="btn sm go" disabled={sibuk} aria-busy={sibuk} onClick={() => tarik(q.id)}>{sibuk ? "Menarik…" : "Ya, tarik"}</button>
                           <button className="btn sm" onClick={() => setKonfirmasi(null)}>Batal</button>
                         </span>
                       </>
@@ -200,6 +201,7 @@ export default function FeedClient({ sesiAwal }: { sesiAwal: SesiPublik }) {
         })}
       </div>
 
+      <SiteFooter className="feed-footer" />
       <div className="react-bar" role="group" aria-label="Kirim reaksi ke layar">
         <span>Kirim<br />reaksi</span>
         {REAKSI.map((e) => <button key={e} onClick={(ev) => reaksi(e, ev)} aria-label={`Reaksi ${e}`}>{e}</button>)}

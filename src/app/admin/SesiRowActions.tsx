@@ -23,7 +23,7 @@ export function SesiRowActions({ id, topik }: { id: string; topik: string }) {
   }
   return (
     <>
-      <button className="btn sm" onClick={duplikat} disabled={sibuk}>Duplikat</button>
+      <button className="btn sm" onClick={duplikat} disabled={sibuk} aria-busy={sibuk}>{sibuk ? "Memproses…" : "Duplikat"}</button>
       <button className="linkish danger" onClick={hapus} disabled={sibuk}>Hapus</button>
     </>
   );

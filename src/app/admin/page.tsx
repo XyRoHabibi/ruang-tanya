@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getAdmin } from "@/lib/auth";
 import { db } from "@/lib/supabase/admin";
 import { AdminNav } from "@/components/AdminNav";
+import { SiteFooter } from "@/components/SiteFooter";
 import type { Sesi } from "@/lib/types";
 import { SesiRowActions } from "./SesiRowActions";
 
@@ -51,6 +52,7 @@ export default async function AdminHome() {
           ))}
         </div>
       )}
+      <SiteFooter />
     </main>
   );
 }

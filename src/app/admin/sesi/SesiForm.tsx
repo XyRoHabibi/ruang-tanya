@@ -58,7 +58,7 @@ export function SesiForm({ sesi }: { sesi?: Sesi }) {
         <div className="count">{materi.length}/20000</div></div>
       {galat && <div className="galat" style={{ marginTop: 14 }} role="alert">{galat}</div>}
       <div style={{ display: "flex", gap: 12, marginTop: 18 }}>
-        <button className="btn go" disabled={sibuk}>{sibuk ? "Menyimpan…" : sesi ? "Simpan perubahan" : "Buat sesi"}</button>
+        <button className="btn go" disabled={sibuk} aria-busy={sibuk}>{sibuk ? "Menyimpan…" : sesi ? "Simpan perubahan" : "Buat sesi"}</button>
         <button type="button" className="btn" onClick={() => router.back()}>Batal</button>
       </div>
     </form>

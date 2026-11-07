@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { AdminState, PilihanWord, Pertanyaan } from "@/lib/types";
 import { AVATARS } from "@/lib/avatars";
-import { api, jam, tanggalIndo, useDebounced, useOrigin, useSesiChannel } from "@/lib/client";
+import { api, jam, tanggalIndo, useBusy, useDebounced, useOrigin, useSesiChannel } from "@/lib/client";
 import { masukRekap, versiTerpilih } from "@/lib/word";
 import { Avatar } from "@/components/Avatar";
 import { AvatarPicker } from "@/components/AvatarPicker";
@@ -29,6 +29,7 @@ export default function PanelClient({ awal }: { awal: AdminState }) {
   const known = useRef(new Set(awal.pertanyaan.map((q) => q.id)));
   const timers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const { toast, node: toastNode } = useToast();
+  const { run, is, any } = useBusy();
 
   useEffect(() => {
     const close = (e: MouseEvent) => { if (!(e.target as HTMLElement).closest(".menu-wrap")) setMenu(null); };
@@ -54,13 +55,17 @@ export default function PanelClient({ awal }: { awal: AdminState }) {
   const muatNanti = useDebounced(muat, 300);
   useSesiChannel(sesi.kode, { onUbah: () => muatNanti() }, 8000);
 
-  async function patchQ(id: string, body: Record<string, unknown>, pesan?: string) {
-    try { await api(`/api/admin/pertanyaan/${id}`, "PATCH", body); if (pesan) toast(pesan); muat(); }
-    catch (e) { toast(e instanceof Error ? e.message : "Gagal."); }
+  function patchQ(id: string, body: Record<string, unknown>, pesan?: string, key = `q-${id}`) {
+    return run(key, async () => {
+      try { await api(`/api/admin/pertanyaan/${id}`, "PATCH", body); await muat(); if (pesan) toast(pesan); }
+      catch (e) { toast(e instanceof Error ? e.message : "Gagal."); }
+    });
   }
-  async function patchSesi(body: Record<string, unknown>, pesan?: string) {
-    try { await api(`/api/admin/sesi/${sesi.id}`, "PATCH", body); if (pesan) toast(pesan); muat(); }
-    catch (e) { toast(e instanceof Error ? e.message : "Gagal."); }
+  function patchSesi(body: Record<string, unknown>, pesan: string | undefined, key: string) {
+    return run(key, async () => {
+      try { await api(`/api/admin/sesi/${sesi.id}`, "PATCH", body); await muat(); if (pesan) toast(pesan); }
+      catch (e) { toast(e instanceof Error ? e.message : "Gagal."); }
+    });
   }
 
   const jawabanSaya = (q: Pertanyaan) => drafts[q.id] ?? q.jawaban_admin ?? "";
@@ -83,31 +88,35 @@ export default function PanelClient({ awal }: { awal: AdminState }) {
 
   function salinKeSaya(q: Pertanyaan) {
     ketik(q, q.jawaban_ai ?? "");
-    patchQ(q.id, { pilihan_word: "admin" });
+    patchQ(q.id, { pilihan_word: "admin" }, undefined, `pick-${q.id}-admin`);
     toast("Jawaban AI disalin ke Versi saya. Silakan edit.");
     setTimeout(() => document.getElementById(`saya-${q.id}`)?.focus(), 50);
   }
 
-  async function regen(q: Pertanyaan) {
-    try { await api(`/api/admin/pertanyaan/${q.id}/ai`, "POST"); muat(); }
-    catch (e) { toast(e instanceof Error ? e.message : "Gagal."); }
+  function regen(q: Pertanyaan) {
+    return run(`ai-${q.id}`, async () => {
+      try { await api(`/api/admin/pertanyaan/${q.id}/ai`, "POST"); await muat(); }
+      catch (e) { toast(e instanceof Error ? e.message : "Gagal."); }
+    });
   }
 
-  async function aksi(a: string, extra: Record<string, unknown> = {}, pesan?: string) {
-    try { await api(`/api/admin/sesi/${sesi.id}/aksi`, "POST", { aksi: a, ...extra }); if (pesan) toast(pesan); muat(); return true; }
-    catch (e) { toast(e instanceof Error ? e.message : "Gagal."); return false; }
+  function aksi(a: string, extra: Record<string, unknown> = {}, pesan?: string) {
+    return run(`aksi-${a}`, async () => {
+      try { await api(`/api/admin/sesi/${sesi.id}/aksi`, "POST", { aksi: a, ...extra }); await muat(); if (pesan) toast(pesan); }
+      catch (e) { toast(e instanceof Error ? e.message : "Gagal."); }
+    });
   }
 
-  async function simpanData() {
+  function simpanData() {
     if (!modal || modal.jenis !== "data") return;
     setGalatModal("");
-    try {
+    return run("modal", async () => { try {
       if (modal.id) await api(`/api/admin/pertanyaan/${modal.id}`, "PATCH", { data: modal.form });
       else await api(`/api/admin/sesi/${sesi.id}/aksi`, "POST", { aksi: "tambah", ...modal.form });
       toast(modal.id ? "Data pertanyaan disimpan." : "Pertanyaan ditambahkan.");
+      await muat();
       setModal(null);
-      muat();
-    } catch (e) { setGalatModal(e instanceof Error ? e.message : "Gagal menyimpan."); }
+    } catch (e) { setGalatModal(e instanceof Error ? e.message : "Gagal menyimpan."); } });
   }
 
   const link = `${origin}/${sesi.kode}`;
@@ -131,9 +140,9 @@ export default function PanelClient({ awal }: { awal: AdminState }) {
       </div>
 
       <div className="toolbar">
-        <button className="switch" aria-pressed={sesi.status === "dibuka"}
+        <button className="switch" aria-pressed={sesi.status === "dibuka"} aria-busy={is("status")} disabled={is("status")}
           onClick={() => patchSesi({ status: sesi.status === "dibuka" ? "ditutup" : "dibuka" },
-            sesi.status === "dibuka" ? "Sesi ditutup. Form tidak menerima pertanyaan." : "Sesi dibuka. Teman bisa mengirim pertanyaan.")}>
+            sesi.status === "dibuka" ? "Sesi ditutup. Form tidak menerima pertanyaan." : "Sesi dibuka. Teman bisa mengirim pertanyaan.", "status")}>
           <span className="tr" />{sesi.status === "dibuka" ? "Sesi dibuka" : sesi.status === "draf" ? "Draf · klik untuk membuka" : "Sesi ditutup"}
         </button>
         <span className="url">{link.replace(/^https?:\/\//, "") || `/${sesi.kode}`}</span>
@@ -141,7 +150,7 @@ export default function PanelClient({ awal }: { awal: AdminState }) {
         <button className="linkish" onClick={() => setModal({ jenis: "qr" })}>QR</button>
         <Link className="linkish" href={`/admin/sesi/${sesi.id}/atur`}>Atur sesi</Link>
         <span className="grow" />
-        <button className="btn sm" onClick={() => aksi("pakai-ai-semua", {}, "Semua pertanyaan memakai jawaban AI.")}>Pakai AI untuk semua</button>
+        <button className="btn sm" aria-busy={is("aksi-pakai-ai-semua")} disabled={is("aksi-pakai-ai-semua")} onClick={() => aksi("pakai-ai-semua", {}, "Semua pertanyaan memakai jawaban AI.")}>Pakai AI untuk semua</button>
         <a className="btn sm sun" href={`/${sesi.kode}/layar`} target="_blank" rel="noreferrer">Buka layar presentasi ↗</a>
         <Link className="btn sm dark" href={`/admin/sesi/${sesi.id}/word`}>Pratinjau &amp; unduh Word</Link>
       </div>
@@ -162,14 +171,15 @@ export default function PanelClient({ awal }: { awal: AdminState }) {
             <div className="col-h"><span className="label">{judul}</span>{pilih === key && masukRekap(q) && <span className="stamp">MASUK WORD</span>}</div>
             {body}
             <div className="col-f">
-              <button className={`pick ${pilih === key ? "on" : ""}`} disabled={!bisa} aria-pressed={pilih === key}
-                onClick={() => patchQ(q.id, { pilihan_word: key })}><span className="bx" />Masuk Word</button>
+              <button className={`pick ${pilih === key ? "on" : ""}`} disabled={!bisa || is(`pick-${q.id}-${key}`)} aria-pressed={pilih === key} aria-busy={is(`pick-${q.id}-${key}`)}
+                onClick={() => patchQ(q.id, { pilihan_word: key }, undefined, `pick-${q.id}-${key}`)}><span className="bx" />Masuk Word</button>
               <span className="acts">{acts}</span>
             </div>
           </div>
         );
         return (
-          <article key={q.id} className={`pq ${!masukRekap(q) ? "dim" : ""} ${fresh.has(q.id) ? "fresh" : ""} ${spot ? "spot" : ""}`}>
+          <article key={q.id} className={`pq ${!masukRekap(q) ? "dim" : ""} ${fresh.has(q.id) ? "fresh" : ""} ${spot ? "spot" : ""}`} aria-busy={is(`q-${q.id}`) || any(`pick-${q.id}`) || is(`spot-${q.id}`, `ai-${q.id}`)}>
+            {(is(`q-${q.id}`) || any(`pick-${q.id}`) || is(`spot-${q.id}`, `ai-${q.id}`)) && <div className="busy-bar" />}
             <div className="pq-top">
               <span className="pq-no">{String(q.nomor).padStart(2, "0")}</span>
               <Avatar i={q.avatar} size={56} />
@@ -187,8 +197,8 @@ export default function PanelClient({ awal }: { awal: AdminState }) {
               <div className="pq-side">
                 <span className="chip sun">🔥 {q.jumlah_dukungan} penasaran</span>
                 {masukRekap(q) && (spot
-                  ? <button className="chip live" onClick={() => patchSesi({ sorotan_id: null }, "Layar kembali ke tampilan antrean.")}>Di layar · turunkan</button>
-                  : <button className="btn sm" onClick={() => patchSesi({ sorotan_id: q.id }, `Pertanyaan ${String(q.nomor).padStart(2, "0")} tampil besar di layar.`)}>Tampilkan di layar</button>)}
+                  ? <button className="chip live" aria-busy={is(`spot-${q.id}`)} disabled={is(`spot-${q.id}`)} onClick={() => patchSesi({ sorotan_id: null }, "Layar kembali ke tampilan antrean.", `spot-${q.id}`)}>Di layar · turunkan</button>
+                  : <button className="btn sm" onClick={() => patchSesi({ sorotan_id: q.id }, `Pertanyaan ${String(q.nomor).padStart(2, "0")} tampil besar di layar.`, `spot-${q.id}`)} aria-busy={is(`spot-${q.id}`)} disabled={is(`spot-${q.id}`)}>Tampilkan di layar</button>)}
                 <span className="menu-wrap">
                   <button className="linkish" onClick={() => setMenu(menu === q.id ? null : q.id)} aria-expanded={menu === q.id}>••• lainnya</button>
                   {menu === q.id && (
@@ -208,8 +218,8 @@ export default function PanelClient({ awal }: { awal: AdminState }) {
                 q.status_ai === "selesai" && q.jawaban_ai ? <div className="col-body">{q.jawaban_ai}</div>
                   : q.status_ai === "gagal" ? <span className="st fail">Gagal: {q.ai_galat || "coba lagi."}</span>
                   : <><span className="st work">AI sedang menjawab…</span><div className="skel"><i /><i /><i /><i /></div></>,
-                q.status_ai === "gagal" ? <button className="linkish" onClick={() => regen(q)}>Coba lagi</button>
-                  : q.status_ai === "selesai" ? <><button className="linkish" onClick={() => regen(q)}>Buat ulang</button><button className="linkish" onClick={() => salinKeSaya(q)}>Salin ke Saya</button></> : null,
+                q.status_ai === "gagal" ? <button className="linkish" aria-busy={is(`ai-${q.id}`)} disabled={is(`ai-${q.id}`)} onClick={() => regen(q)}>Coba lagi</button>
+                  : q.status_ai === "selesai" ? <><button className="linkish" aria-busy={is(`ai-${q.id}`)} disabled={is(`ai-${q.id}`)} onClick={() => regen(q)}>Buat ulang</button><button className="linkish" onClick={() => salinKeSaya(q)}>Salin ke Saya</button></> : null,
                 !!q.jawaban_ai)}
               {col("penanya", "Versi penanya",
                 q.jawaban_penanya ? <div className="col-body">{q.jawaban_penanya}</div> : <div className="col-body empty">Penanya tidak mengisi.</div>,
@@ -271,7 +281,7 @@ export default function PanelClient({ awal }: { awal: AdminState }) {
             {galatModal && <div className="galat" style={{ marginTop: 14 }} role="alert">{galatModal}</div>}
             <div className="acts">
               <button className="btn" onClick={() => setModal(null)}>Batal</button>
-              <button className="btn go" onClick={simpanData}>{modal.id ? "Simpan" : "Tambahkan"}</button>
+              <button className="btn go" onClick={simpanData} aria-busy={is("modal")} disabled={is("modal")}>{is("modal") ? "Menyimpan…" : modal.id ? "Simpan" : "Tambahkan"}</button>
             </div>
           </div>
         </div>

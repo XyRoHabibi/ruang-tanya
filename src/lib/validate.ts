@@ -1,4 +1,4 @@
-export const RESERVED = new Set(["admin", "api", "login", "teman", "layar", "_next", "favicon.ico"]);
+export const RESERVED = new Set(["admin", "api", "login", "teman", "layar", "_next", "favicon.ico", "lisensi", "robots.txt", "icon.svg", "apple-icon.png", "opengraph-image"]);
 
 export const clean = (v: unknown, max: number) =>
   typeof v === "string" ? v.replace(/\s+\n/g, "\n").trim().slice(0, max) : "";

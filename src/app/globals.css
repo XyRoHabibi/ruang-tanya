@@ -368,3 +368,36 @@ a { color: inherit; }
   .page { padding: 28px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* ================= LOADING ================= */
+.btn[aria-busy="true"], .pick[aria-busy="true"], .linkish[aria-busy="true"], .chip[aria-busy="true"], .switch[aria-busy="true"], .lv-ctl button[aria-busy="true"] { cursor: progress; }
+.btn[aria-busy="true"]::before, .pick[aria-busy="true"]::before, .linkish[aria-busy="true"]::before, .lv-ctl button[aria-busy="true"]::before {
+  content: ""; display: inline-block; flex: none; width: 1em; height: 1em; margin-right: .35em; vertical-align: -.15em;
+  border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite;
+}
+.btn[aria-busy="true"]::before { margin-right: 0; }
+.btn[aria-busy="true"]:disabled { opacity: .85; }
+.pick[aria-busy="true"] .bx { display: none; }
+.chip[aria-busy="true"]::before { width: 10px; height: 10px; background: none; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; }
+.switch[aria-busy="true"] .tr::after { animation: pulse .6s infinite; }
+.pq { position: relative; }
+.busy-bar { position: absolute; left: 0; right: 0; top: 0; height: 4px; z-index: 2; background: linear-gradient(90deg, transparent, var(--tomato), transparent) no-repeat; background-size: 40% 100%; animation: bar 1s linear infinite; }
+@keyframes bar { from { background-position: -40% 0; } to { background-position: 140% 0; } }
+
+.page-loading { min-height: 70dvh; display: grid; place-content: center; justify-items: center; gap: 16px; color: var(--ink-2); font: 700 15px var(--sans); }
+.page-loading.dark { min-height: 100dvh; background: #111; color: #bbb; }
+.hop { display: flex; gap: 10px; }
+.hop span { display: block; animation: hop .9s ease-in-out infinite; }
+@keyframes hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-14px) rotate(-6deg); } }
+
+/* ================= FOOTER & LISENSI ================= */
+.site-footer { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 8px; padding: 20px 16px 28px; font: 600 12.5px var(--sans); color: var(--ink-3); }
+.site-footer a { color: var(--ink-2); text-underline-offset: 3px; }
+.site-footer a:hover { color: var(--ink); }
+.lisensi { min-height: 100dvh; display: grid; justify-items: center; align-content: center; padding: 24px 16px 0; }
+.lisensi .card-form { width: min(720px, 100%); margin: 0; padding: 24px; }
+.lisensi h1 { font: 800 34px var(--display); margin: 16px 0 8px; letter-spacing: -.02em; }
+.lisensi .lead { color: var(--ink-2); margin: 0 0 16px; }
+.lisensi pre { white-space: pre-wrap; font: 500 13px/1.6 var(--mono); background: var(--bg); border: 2px solid var(--ink); border-radius: 14px; padding: 16px; margin: 0 0 16px; overflow-wrap: anywhere; }
+.feed-footer { margin-top: -96px; padding-bottom: 100px; }
+.home, .login { grid-template-rows: 1fr auto; }

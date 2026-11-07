@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { PertanyaanPublik, SesiPublik, StatePublik } from "@/lib/types";
-import { api, useDebounced, useOrigin, useSesiChannel } from "@/lib/client";
+import { api, useBusy, useDebounced, useOrigin, useSesiChannel } from "@/lib/client";
 import { Avatar } from "@/components/Avatar";
 import { QR } from "@/components/QR";
 
@@ -21,6 +21,7 @@ export default function LayarClient({ sesiAwal, isAdmin }: { sesiAwal: SesiPubli
   const known = useRef<Set<string> | null>(null);
   const lastSpot = useRef<string | null>(sesiAwal.sorotan_id);
   const fid = useRef(0);
+  const { run, is } = useBusy();
 
   const tambahFloat = useCallback((e: string) => {
     const id = ++fid.current;
@@ -50,9 +51,9 @@ export default function LayarClient({ sesiAwal, isAdmin }: { sesiAwal: SesiPubli
   useSesiChannel(kode, { onUbah: () => muatNanti(), onReaksi: tambahFloat }, 10000);
   useEffect(() => { muat(); }, [muat]);
 
-  const berikutnya = useCallback(async () => {
-    try { await api(`/api/admin/sesi/${sesi.id}/aksi`, "POST", { aksi: "berikutnya" }); muat(); } catch { /* abaikan */ }
-  }, [sesi.id, muat]);
+  const berikutnya = useCallback(() => run("berikutnya", async () => {
+    try { await api(`/api/admin/sesi/${sesi.id}/aksi`, "POST", { aksi: "berikutnya" }); await muat(); } catch { /* abaikan */ }
+  }), [sesi.id, muat, run]);
 
   const bahas = useCallback(async (id: string | null) => {
     // Langsung tampil di layar, lalu disimpan ke server.
@@ -180,7 +181,7 @@ export default function LayarClient({ sesiAwal, isAdmin }: { sesiAwal: SesiPubli
       {isAdmin && (
         <div className="lv-ctl">
           <Link href={`/admin/sesi/${sesi.id}`}>← Panel</Link>
-          <button onClick={berikutnya} title="Tombol N">Bahas berikutnya</button>
+          <button onClick={berikutnya} title="Tombol N" aria-busy={is("berikutnya")} disabled={is("berikutnya")}>Bahas berikutnya</button>
           <button onClick={bukaPodium} title="Tombol P">Tampilkan podium</button>
           <button onClick={() => document.documentElement.requestFullscreen?.().catch(() => {})} title="Tombol F">Layar penuh</button>
         </div>

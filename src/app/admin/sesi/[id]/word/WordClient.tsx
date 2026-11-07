@@ -103,7 +103,7 @@ export default function WordClient({ state }: { state: AdminState }) {
         <div><span className="label">Pratinjau</span><h2>{namaFile(sesi)}</h2></div>
         <div className="r">
           <Link className="btn" href={`/admin/sesi/${sesi.id}`}>← Panel</Link>
-          <button className="btn go" onClick={unduh} disabled={sibuk || rows.length === 0}>{sibuk ? "Membuat…" : "Unduh .docx"}</button>
+          <button className="btn go" onClick={unduh} disabled={sibuk || rows.length === 0} aria-busy={sibuk}>{sibuk ? "Membuat…" : "Unduh .docx"}</button>
         </div>
       </div>
       <div className={`warn ${kurang.length ? "" : "ok"}`}>

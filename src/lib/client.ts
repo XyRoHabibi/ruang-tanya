@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { browserClient } from "./supabase/browser";
 
@@ -82,6 +82,21 @@ export function useSesiChannel(
 const noop = () => () => {};
 /** origin situs (mis. https://qna.domainmu.com); string kosong saat render di server. */
 export const useOrigin = () => useSyncExternalStore(noop, () => window.location.origin, () => "");
+
+/** Menandai aksi yang sedang berjalan, supaya tombolnya bisa menampilkan loading dan tidak diklik dua kali. */
+export function useBusy() {
+  const [busy, setBusy] = useState<ReadonlySet<string>>(new Set());
+  const run = useCallback(async <T,>(key: string, fn: () => Promise<T>): Promise<T | undefined> => {
+    let sudah = false;
+    setBusy((s) => { sudah = s.has(key); return sudah ? s : new Set(s).add(key); });
+    if (sudah) return undefined;
+    try { return await fn(); }
+    finally { setBusy((s) => { const n = new Set(s); n.delete(key); return n; }); }
+  }, []);
+  const is = useCallback((...keys: string[]) => keys.some((k) => busy.has(k)), [busy]);
+  const any = useCallback((prefix: string) => [...busy].some((k) => k.startsWith(prefix)), [busy]);
+  return { run, is, any };
+}
 
 export const REAKSI = ["👏", "🔥", "🤯", "😂", "🤲"];
 

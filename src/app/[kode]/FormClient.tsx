@@ -7,6 +7,7 @@ import { api, getDeviceId, loadProfil, saveProfil, useDebounced, useSesiChannel 
 import { Avatar } from "@/components/Avatar";
 import { AvatarPicker } from "@/components/AvatarPicker";
 import { SesiHeader } from "@/components/SesiHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 
 type Sukses = { nomor: number; pertamaKali: boolean; avatar: number };
 
@@ -104,6 +105,7 @@ export default function FormClient({ sesiAwal }: { sesiAwal: SesiPublik }) {
             <button className="linkish" onClick={() => { setSukses(null); setTanya(""); setJawab(""); }}>Kirim pertanyaan lain</button>
           </p>
         </div>
+        <SiteFooter />
       </main>
     );
   }
@@ -163,10 +165,11 @@ export default function FormClient({ sesiAwal }: { sesiAwal: SesiPublik }) {
             {galat && <div className="galat" style={{ marginTop: 14 }} role="alert">{galat}</div>}
           </form>
           <div className="submit">
-            <button className="btn go" form="ask" type="submit" disabled={kirim}>{kirim ? "Mengirim…" : "Kirim pertanyaan 🚀"}</button>
+            <button className="btn go" form="ask" type="submit" disabled={kirim} aria-busy={kirim}>{kirim ? "Mengirim…" : "Kirim pertanyaan 🚀"}</button>
           </div>
         </>
       )}
+      <SiteFooter />
     </main>
   );
 }

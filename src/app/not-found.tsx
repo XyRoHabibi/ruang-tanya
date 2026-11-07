@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Avatar } from "@/components/Avatar";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export default function NotFound() {
   return (
@@ -10,6 +11,7 @@ export default function NotFound() {
         <p>Cek lagi kode atau link yang dibagikan kelompok penyaji.</p>
         <Link className="btn sun" href="/" style={{ marginTop: 14 }}>Masukkan kode lain</Link>
       </div>
+      <SiteFooter />
     </main>
   );
 }

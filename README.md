@@ -103,3 +103,9 @@ src/
 supabase/schema.sql    tabel, trigger, RLS, izin
 docs/                  PRD dan mockup
 ```
+
+## Lisensi
+
+[MIT License](LICENSE) © 2026 Naufal Habibi. Kamu boleh memakai, menyalin, mengubah, dan membagikan kode ini, asalkan tetap menyertakan pemberitahuan hak cipta dan lisensinya. Teks lisensi juga bisa dilihat di halaman `/lisensi` pada aplikasi.
+
+Font Bricolage Grotesque dan Plus Jakarta Sans di `assets/fonts/` memakai [SIL Open Font License](https://openfontlicense.org).

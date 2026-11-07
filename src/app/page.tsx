@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Avatar } from "@/components/Avatar";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export default function Home() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function Home() {
         <button className="btn go block" style={{ marginTop: 16, padding: 14 }}>Masuk</button>
         <p style={{ marginTop: 16, fontSize: 13 }}><Link className="linkish" href="/admin">Masuk sebagai penyaji</Link></p>
       </form>
+      <SiteFooter />
     </main>
   );
 }
