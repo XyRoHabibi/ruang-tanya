@@ -1,0 +1,17 @@
+{
+  "fps": 30,
+  "bpm": 120,
+  "outroLogo": 103,
+  "voEnd": 1650,
+  "scenes": [
+    { "id": "chaos", "dur": 177 },
+    { "id": "shy", "dur": 96 },
+    { "id": "reveal", "dur": 153 },
+    { "id": "share", "dur": 210 },
+    { "id": "ask", "dur": 252 },
+    { "id": "screen", "dur": 244 },
+    { "id": "ai", "dur": 214 },
+    { "id": "word", "dur": 174 },
+    { "id": "outro", "dur": 220 }
+  ]
+}
