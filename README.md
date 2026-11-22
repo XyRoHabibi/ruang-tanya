@@ -4,6 +4,12 @@
 
 > Dibuat untuk sesi tanya jawab mata kuliah Pendidikan Agama Islam, tapi bisa dipakai untuk presentasi apa pun.
 
+## Lihat videonya
+
+https://github.com/user-attachments/assets/8c5800fa-0cfc-49b3-b960-6462b9d36483
+
+*Video motion graphic 58 detik dibuat dengan [Remotion](https://www.remotion.dev). Source-nya ada di folder [`my-video/`](my-video).*
+
 ## Kenapa dibuat
 
 Biasanya pertanyaan dikirim ke grup WhatsApp dan tercecer di antara obrolan lain. Setelah presentasi, penyaji masih harus menyalin satu per satu ke Word, merapikan nama dan NIM, lalu mencari jawabannya. Sesi tanya jawab juga sering sepi karena banyak yang malu bertanya.
@@ -102,6 +108,7 @@ src/
   lib/                 akses data, AI (Gemini), avatar SVG, realtime, aturan Word
 supabase/schema.sql    tabel, trigger, RLS, izin
 docs/                  PRD dan mockup
+my-video/              video promo (Remotion), naskah voice over, generator SFX & musik
 ```
 
 ## Lisensi
